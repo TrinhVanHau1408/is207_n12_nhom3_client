@@ -1,0 +1,76 @@
+.auth-form {
+    position: absolute;
+    top: 58%;
+    left: 50%;
+    width: 600px;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: #d9d9d9;
+    border-radius: 5px;
+    padding: 50px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.content {
+    margin-top: 30px;
+}
+
+.account {
+    width: 100%;
+    margin: 10px 0;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 1.6rem;
+    border: 1px solid var(--primary);
+    border-radius: 2px;
+}
+
+.acctions {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.check-password {
+    color: var(--primary);
+}
+
+.remember {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    margin-right: 8px;
+}
+
+.miss-password {
+    text-decoration: none;
+    font-size: 1.6rem;
+    color: var(--primary);
+}
+
+.register {
+    display: block;
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 20px 0;
+}
+
+.footer {
+    color: var(--primary);
+    text-align: center;
+    span {
+        font-size: 1.6rem;
+        margin: 0 5px;
+    }
+}
+.icon {
+    text-decoration: none;
+    color: var(--primary);
+}
