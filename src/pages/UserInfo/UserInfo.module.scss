@@ -1,0 +1,112 @@
+.form-info {
+    margin: 50px 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+
+    h3 {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+}
+
+.form-input {
+    margin: 40px 100px 40px 0;
+    font-size: 1.6rem;
+
+    input {
+        margin: 0 20px;
+        padding: 0 8px;
+        border-radius: 5px;
+        width: 70%;
+        height: 40px;
+        border: 1px solid var(--black);
+    }
+
+    .row {
+        margin: 16px 0;
+        width: 100%;
+    }
+}
+
+.user-email {
+    .email {
+        margin-left: 50px;
+        width: 84%;
+    }
+}
+
+.user-address {
+    .address {
+        margin-left: 40px;
+        width: 84%;
+    }
+}
+
+.form-submit {
+    Button {
+        margin-right: 20px;
+    }
+}
+
+.bh-header {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 20px 20px 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    list-style: none;
+    background-color: var(--background);
+    padding: 15px;
+    border-radius: 5px;
+
+    .option {
+        .link {
+            color: var(--black);
+        }
+        // .active {
+        //     font-weight: 600;
+        // }
+    }
+}
+
+.delivering,
+.delivered {
+    margin: 40px 0;
+    padding: 20px 30px;
+    border-radius: 5px;
+    h3 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    background-color: var(--background);
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        .img {
+            width: 100px;
+            border: 1px solid var(--primary);
+            margin-right: 16px;
+        }
+    }
+}
+
+.total-money {
+    margin-top: 20px;
+    text-align: right;
+    font-weight: 600;
+}

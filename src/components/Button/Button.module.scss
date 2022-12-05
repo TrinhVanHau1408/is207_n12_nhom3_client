@@ -1,0 +1,45 @@
+.wrapper {
+    min-width: 50px;
+    padding: 9px 16px;
+    border-radius: 5px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+//Button type
+.primary {
+    color: var(--white);
+    background-color: var(--primary);
+
+    // &:hover{
+    //     background: linear-gradient();
+    // }
+}
+
+.buy {
+    color: var(--white);
+    background-color: var(--red);
+}
+
+.transparent {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.edit {
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+//Button size
+
+.small {
+    max-width: 200px;
+}
+
+.large {
+    width: 100%;
+    height: 50px;
+    font-size: 2rem;
+}
