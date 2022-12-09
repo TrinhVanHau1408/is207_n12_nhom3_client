@@ -2,9 +2,16 @@
     min-width: 50px;
     padding: 9px 16px;
     border-radius: 5px;
-    font-size: 1.6rem;
+    font-size: 16px;
     cursor: pointer;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    background-color: #d9d9d9;
+    user-select: none;
+
+    &.disable {
+        pointer-events: none;
+        opacity: 0.5;
+    }
 }
 
 //Button type
@@ -41,5 +48,5 @@
 .large {
     width: 100%;
     height: 50px;
-    font-size: 2rem;
+    font-size: 20px;
 }

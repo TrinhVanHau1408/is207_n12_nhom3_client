@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './LogIn.module.scss';
-import { FacebookFilled, GoogleOutlined } from '@ant-design/icons';
+import { FacebookFilled, GoogleOutlined, CloseOutlined } from '@ant-design/icons';
 
 import Button from '~/components/Button';
 import { Link } from 'react-router-dom';
@@ -9,6 +9,9 @@ const cx = classNames.bind(styles);
 function LogIn() {
     return (
         <div className={cx('auth-form')}>
+            <Link to="/" className={cx('btn-close')}>
+                <CloseOutlined style={{ fontSize: '25px' }} />
+            </Link>
             <div className={cx('header')}>
                 <h2>Đăng nhập</h2>
             </div>
