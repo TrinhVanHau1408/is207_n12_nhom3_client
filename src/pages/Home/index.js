@@ -21,7 +21,7 @@ function HomePage() {
             <ProductList heading="Sản phẩm bán chạy" />
             <ProductList heading="Danh sách sản phẩm" />
             <div className={styles.btnViewMore}>
-                <a href="/product">Xem tất cả</a>
+                <a href="/productlist">Xem tất cả</a>
             </div>
             <Vacancy />
         </div>
