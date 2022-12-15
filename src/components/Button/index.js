@@ -11,6 +11,7 @@ function Button({
     large = false,
     transparent = false,
     edit = false,
+    disable = false,
 
     href,
     children,
@@ -26,11 +27,16 @@ function Button({
         large,
         transparent,
         edit,
+        disable,
     });
     const props = {
         onClick,
         passProps,
     };
+
+    if (disable) {
+        delete props.onClick;
+    }
 
     if (to) {
         props.to = to;
