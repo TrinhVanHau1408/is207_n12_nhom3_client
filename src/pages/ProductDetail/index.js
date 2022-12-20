@@ -1,15 +1,29 @@
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import { Link } from 'react-router-dom';
 import 'antd/dist/antd.min.css';
 import { Col, Row } from 'antd';
-
+import { useParams } from 'react-router-dom';
 import Comments from '~/components/Comment';
 import Button from '~/components/Button';
 import styles from './ProcductDetail.module.scss';
 
 const cx = classNames.bind(styles);
 
-function ProcductDetail() {
+function ProcductDetail(props) {
+    const [phoneDetail, setPhoneDetail] = useState([]);
+    let params = useParams()
+    let slug = params.slug;
+
+   
+    useEffect(() => {
+       fetch('/api/phone/'+slug)
+       .then(data => data.json())
+       .then(res => setPhoneDetail(res))
+       .catch(err => console.log(err))
+      },[]);
+
+      console.log(phoneDetail)
     return (
         <div className={cx('grid')}>
             <div className="link">

@@ -43,7 +43,7 @@ function HomePage() {
             <ProductList heading="Danh sách sản phẩm" /> */}
 
             
-            <ListProductStyled>
+            {/* <ListProductStyled>
                 <Divider><Typography.Title level={5} className="bestSelling">Sản phẩm bán chạy</Typography.Title></Divider>
                 <Row>
                     {
@@ -54,20 +54,20 @@ function HomePage() {
                         ))
                     }
                 </Row>
-            </ListProductStyled>
+            </ListProductStyled> */}
 
-            {/* <ListProductStyled>
-              
+            <ListProductStyled>
                 <Divider><Typography.Title level={5} className="bestSelling">Tất cả sản phẩm</Typography.Title></Divider>
                 <Row>
-                <   Col span={4}>
-                       <CardProduct />
-                    </Col>
-                    <Col span={4}>
-                        <CardProduct />
-                    </Col>
+                    {
+                        phones.map(phone => (
+                        <Col span={4} key={phone.id}>
+                            <CardProduct  id={phone.id} slug={phone.slug} name={phone.name} imgUrl={phone.imgUrl} price={phone.priceSale}/>
+                        </Col>
+                        ))
+                    }
                 </Row>
-            </ListProductStyled> */}
+            </ListProductStyled>
 
             
             

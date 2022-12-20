@@ -2,7 +2,7 @@ import React from 'react';
 // import images from '~/assets/images';
 import Styled from 'styled-components';
 import {Card, Button, Typography} from 'antd';
-import { useNavigate } from 'react-router-dom';
+import formatVND from '~/utilis';
 const CardStyled = Styled(Card)`
     border-radius: 5px;
     text-align: center;
@@ -48,19 +48,19 @@ const CardStyled = Styled(Card)`
         transform: scale(1.1);
     }
 `
-function CardProduct({id, name, imgUrl, price}) {
+function CardProduct({id,slug, name, imgUrl, price}) {
 
-    const navigate = useNavigate();
+    
     const handledOnViewDetail = () => {
-        window.location.href = '/productdetail';
+        window.location.href = '/productdetail/'+slug;
     }
     return (
         <div onClick={handledOnViewDetail}>
             <CardStyled hoverable>
                 <img src={imgUrl} alt={name}/>
                 <Typography.Title level={4} className="productName">{name}</Typography.Title>
-                <Typography.Title level={3} type='danger' className="productPrice">{price} vnđ</Typography.Title>
-                <Typography.Text type='danger' className='productCost'>16.0000.000 vnđ</Typography.Text>
+                <Typography.Title level={3} type='danger' className="productPrice">{formatVND(price)}</Typography.Title>
+                <Typography.Text type='danger' className='productCost'>{formatVND(price)}</Typography.Text>
 
                 <div className='productButton'>
                     <Button className='productButton__btnAdd'>Add to cart</Button>
