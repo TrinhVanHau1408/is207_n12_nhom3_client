@@ -2,6 +2,7 @@ import React from 'react';
 // import images from '~/assets/images';
 import Styled from 'styled-components';
 import {Card, Button, Typography} from 'antd';
+import { Link } from 'react-router-dom';
 import formatVND from '~/utilis';
 const CardStyled = Styled(Card)`
     border-radius: 5px;
@@ -51,11 +52,11 @@ const CardStyled = Styled(Card)`
 function CardProduct({id,slug, name, imgUrl, price}) {
 
     
-    const handledOnViewDetail = () => {
-        window.location.href = '/productdetail/'+slug;
-    }
+    // const handledOnViewDetail = () => {
+    //     window.location.href = '/productdetail/'+slug;
+    // }
     return (
-        <div onClick={handledOnViewDetail}>
+        <Link to = {'/productdetail/'+slug}>
             <CardStyled hoverable>
                 <img src={imgUrl} alt={name}/>
                 <Typography.Title level={4} className="productName">{name}</Typography.Title>
@@ -64,10 +65,10 @@ function CardProduct({id,slug, name, imgUrl, price}) {
 
                 <div className='productButton'>
                     <Button className='productButton__btnAdd'>Add to cart</Button>
-                    <Button className='productButton__btnView' onClick={handledOnViewDetail}>View</Button>
+                    <Button className='productButton__btnView' >View</Button>
                 </div>
             </CardStyled>
-        </div>
+        </Link>
     );
 }
 

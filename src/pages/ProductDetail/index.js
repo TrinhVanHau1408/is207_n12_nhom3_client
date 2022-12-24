@@ -1,222 +1,505 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
+import Styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { MinusOutlined, PlusOutlined} from '@ant-design/icons';
 import 'antd/dist/antd.min.css';
-import { Col, Row } from 'antd';
+import { Col, Row, Button, Image, Typography, Input, Descriptions } from 'antd';
 import { useParams } from 'react-router-dom';
 import Comments from '~/components/Comment';
-import Button from '~/components/Button';
 import styles from './ProcductDetail.module.scss';
-
+import { AuthContext } from '~/Context/AuthProvider';
+import { AppContext } from '~/Context/AppProvider';
+import formatVND from '~/utilis';
 const cx = classNames.bind(styles);
 
-function ProcductDetail(props) {
-    const [phoneDetail, setPhoneDetail] = useState([]);
-    let params = useParams()
-    let slug = params.slug;
 
+const WarpperStyled = Styled.div`
+    align-items: center;
+    background: #E8EDED;
+    width: 100%;
+
+`;
+const WarpperDetailStyled = Styled.div`
+    align-items: center;
+    background: #fff;
+    margin: 0 100px;
+`;
+const DetailStyled = Styled.div`
+    border-radius: 25px !important;
+    padding: 10px 10px;
+    margin-top: 10px;
+    .product {
+        // &__img {
+            
+        //     box-shadow: 4px 4px #787A7A;
+        // }
+        &__soLuong Input {
+            border: none;
+            text-align: center;
+            width: 10%;
+        }
+      
+
+    }
+`;
+const WarpperLinkStyled = Styled.div`
+    padding: 20px 0;
+    background: #E8EDED;
+    
+`;
+const DescriptionsStyled = Styled(Descriptions)`
+    width: 80%;
+    min-height: 100px;
+    border-radius: 5px;
+    .product__noiDungKhuyenMai {
+       margin: 0;
+       background: #DEDEDE;
+       text-align: justify;
+    }
+
+    .product_thongSo, .product__noiDungThongSo{
+        margin: 0;
+        background: #DEDEDE;
+    }
+
+    .product_thongSo {
+        text-align: center;
+        // font-size: 18px;
+        font-weight: bold;
+    }
+
+    .product__noiDungThongSo {
+        text-align: justify;
+    }
+
+`;
    
+const ButtonStyled = Styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 15px 0;
+    color: #757575;
+    font-size: .875rem;
+    align-items: center;
+
+    .color, .mau, .boNho {
+        margin-right:5px;
+    }
+
+    .selected {
+        background: #2a254b !important;
+        color: #fff;
+        border: none;
+    }
+`;
+
+// const InputStyled = Styled.div`
+//     display: flex;
+//     flex-direction: row;
+//     width: 100%;
+//     margin: 15px 0;
+//     color: #757575;
+//     Input {
+//         width: 50px;
+//         margin-right: 5px;
+//         text-align: center;
+//         align-items: center;
+//     }
+// `
+
+const WarpperButtonHandleStyled = Styled.div`
+    margin: 20px 0;
+    // display: flex;
+    // justify-content: start;
+   
+    .btn_add {
+        color: #2a254b;
+        border: 1px solid #2a254b;
+    }
+    .btn_add:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    .btn_buy {
+        margin-left: 50px;
+        background: rgb(238, 77, 45);
+        color: #fff;
+        border: none;
+    }
+    .btn_buy:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+`;
+const WarpperThongSoStyled = Styled.div `
+    margin-top: 20px;
+    display: flex;
+    justify-content: end;
+`;
+function unique(variants) {
+    let phoneColor = [{
+        'id':variants[0].colorId,
+        'name': variants[0].color
+    }]
+  
+   
+    variants.forEach(vari => {
+            let colorId = phoneColor.map(phoneC => phoneC.id);
+            if(!colorId.includes(vari.colorId)) {
+            phoneColor.push({
+                'id':vari.colorId,
+                'name': vari.color
+            });
+        }
+    });
+    return phoneColor
+ }
+function ProcductDetail(props) {
+
+    const {user} = React.useContext(AuthContext);
+    const {setCartId} = React.useContext(AppContext);
+
+    const [detail, setDetail] = useState([]);
+    const [price, setPrice] = useState(0);
+    const [colors, setColors] = useState([]);
+    const [boNhos, setBoNhos] = useState([]);
+    const [quantitySelect, setQuantitySelect] = useState(1);
+    const [loaded, setLoaded] = useState(false);
+    const [selectedColor, setSelectedColor] =useState(0);
+    const [selectedRam, setSelectedRam] =useState(0);
+    const [selectedRom, setSelectedRom] =useState(0);
+    const [variant, setVariant] = useState({});
+    const [quantity, setQuantity] = useState();
+
+    const params = useParams()
+    const slug = params.slug;
+
+    // Call API Phone :slug
     useEffect(() => {
        fetch('/api/phone/'+slug)
        .then(data => data.json())
-       .then(res => setPhoneDetail(res))
+       .then(res => {
+            setDetail(res)
+            setPrice(res.phone.priceSale)
+            setLoaded(true)
+            
+         })
        .catch(err => console.log(err))
-      },[]);
+    },[slug]);
 
-      console.log(phoneDetail)
+    function updateQuanity(variant) {
+        const sumQuantity = variant.reduce((total, variCurr) => {
+            return total + variCurr.quantity;
+          }, 0);
+        setQuantity(sumQuantity);
+    }
+    // useEffect(() => {
+
+    //     // Tính tổng tồn kho hiện có của tất cả biến thể
+    //     if (loaded) {
+    //         updateQuanity(detail.variants);
+    //     }
+    // }, [detail, selectedColor])
+
+    useEffect(() => {
+        
+        if (loaded ) {
+            setSelectedRam(0);
+            setSelectedRom(0);
+            // setSelectedColor(0);
+            updateQuanity(detail.variants);
+        }
+    }, [detail, selectedColor])
+
+    useEffect(() => {
+        // Lấy màu của sản phẩm không trùng lập
+        if (detail.variants) setColors(unique(detail.variants));
+    }, [slug, detail ]);
+  
+
+    // Xử lý tăng số lượng đặt
+    const handleIncrease = () => {
+        if (quantitySelect < quantity) {
+            setQuantitySelect(quantitySelect+1);
+        }
+    }
+
+    // Xử lý giảm số lượng đặt
+    const handleDecrease = () => {
+        if (quantitySelect > 1) {
+            setQuantitySelect(quantitySelect-1);
+        }
+       
+    }
+
+    // Xử ý
+    const handleInputChangeQuanity = (e) => {
+        const inputQuanity = e.target.value;
+        
+        if (!Number.isNaN(inputQuanity) || inputQuanity =='') {
+            console.log(inputQuanity)
+            if (inputQuanity ==='') {
+                setQuantitySelect('')
+                return;
+            }
+            if (quantitySelect < parseInt(inputQuanity)) {
+                setQuantitySelect(quantitySelect);
+                return;
+            }
+    
+            if (parseInt(inputQuanity) < 1) {
+                setQuantitySelect(1);
+                return;
+            }
+    
+            setQuantitySelect(parseInt(inputQuanity));
+            return;
+        } else {
+            setQuantitySelect(1);
+        }
+        
+    }
+    // Xử lý chọn lấy dữ liệu bộ nhớ khi chọn 1 màu
+    const handleSelectColor = (e) => {
+
+        if (selectedColor == e.currentTarget.dataset.id) {
+            setSelectedColor(0);
+            setVariant({});
+            setBoNhos([])
+            updateQuanity(detail.variants)
+            return;
+        }
+        let name = e.currentTarget.dataset.name;
+        setBoNhos(detail.variants.filter(vari => {
+                if (vari.color.includes(name)) {
+                    return vari;
+                }
+        }));
+
+        setSelectedColor(e.currentTarget.dataset.id)
+        if (quantitySelect !=1) setQuantitySelect(1);
+       
+        
+    }
+
+    // Xử lý chọn bộ nhớ cập nhật số tiền; ramid, romid
+    const handleSelectBoNho = (e) => {
+        if (selectedRam == e.currentTarget.dataset.ramid && selectedRom == e.currentTarget.dataset.romid) {
+            setSelectedRam(0);
+            setSelectedRom(0);
+            updateQuanity(detail.variants)
+            return;
+        }
+        let percentPrice = e.currentTarget.dataset.percentprice;
+        let ramId = e.currentTarget.dataset.ramid;
+        let romId = e.currentTarget.dataset.romid;
+        setPrice(detail.phone.priceSale * (1+percentPrice/100));
+        setSelectedRom(romId);
+        setSelectedRam(ramId);
+        if (quantitySelect !=1) setQuantitySelect(1);
+    }
+
+    // Xử lý chọn biến thể cụ thể thông qua colorid, ramid, romid
+    useEffect(() => {
+        if (selectedColor && selectedRam && selectedRom) {
+            let variTemp =(detail.variants.filter(vari => {
+                if (vari.colorId == selectedColor && vari.ramId == selectedRam && vari.romId == selectedRom) {
+                    setQuantity(vari.quantity);
+                    return vari;
+                }
+            }))
+
+            setVariant(...variTemp);
+            
+
+        }
+    }, [selectedColor, selectedRam, selectedRom, detail])
+   
+
+    // Xử lý thêm vào giỏ hàng
+    const handleAddToCart = () => {
+        if (user) {
+            if (selectedColor && selectedRam && selectedRom) {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        customerId: user.id, 
+                        item: {
+                            phoneId: detail.phone.id,
+                            phoneDetailId: variant.id,
+                            quantity: quantitySelect,
+                            priceSale: price,
+                            totalMoney: price * quantitySelect
+                        }
+                    })
+                };
+                fetch('/api/cart', requestOptions)
+                    .then(response => response.json())
+                    .then(data => setCartId(data));
+            }
+            
+        } else {
+            console.log('đã logout');
+        }
+
+    }
     return (
-        <div className={cx('grid')}>
-            <div className="link">
-                <Link className={cx('product-link')} to={'/'}>
-                    Trang chủ
-                </Link>
-                <span> &gt; </span>
-                <Link className={cx('product-link')} to={'/'}>
-                    iPhone
-                </Link>
-                <span> &gt; </span>
-                <Link className={cx('product-link')} to={'/'}>
-                    iPhone 13 ProMax
-                </Link>
-            </div>
-            <div gutter={24} className="product-detail">
-                <div className={cx('product-overview')}>
-                    <h3 className={cx('header')}>Điện thoại iPhone 13 ProMax</h3>
-                    <Row gutter={24} className={cx('wrap')}>
-                        <Col lg={20}>
-                            <Row gutter={8} className={cx('wrap-info')}>
-                                <Col lg={12}>
-                                    <img
-                                        className={cx('image')}
-                                        src="https://cdn1.viettelstore.vn/images/Product/ProductImage/medium/1051159192.jpeg"
-                                        alt="iphone 13 promax"
-                                    ></img>
-                                </Col>
-                                <Col lg={12}>
-                                    <div className={cx('wrap-info-detail')}>
-                                        <h2 className={cx('price')}>40.000.000</h2>
-                                        <div className={cx('check')}>
-                                            <p>Tình trạng: &nbsp; </p>
-                                            <p className={cx('checked')}> Còn hàng</p>
-                                        </div>
-                                        <div className={cx('select-color')}>
-                                            <p>Chọn màu:</p>
-                                            <button></button>
-                                            <button style={{ backgroundColor: 'yellow' }}></button>
-                                            <button style={{ backgroundColor: 'white' }}></button>
-                                        </div>
-                                        <div className={cx('memory')}>
-                                            <p> Bộ nhớ:</p>
-                                            <Button>
-                                                <p className={cx('btn-memory')}>6gb/128gb</p>
-                                                <h3 className={cx('btn-price')}>40.000.000</h3>
-                                            </Button>
-                                            <Button>
-                                                <p className={cx('btn-memory')}>8gb/256gb</p>
-                                                <h3 className={cx('btn-price')}>40.000.000</h3>
-                                            </Button>
-                                        </div>
-                                        <div className={cx('quantity')}>
-                                            <p>Số lượng</p>
-                                            <div className={cx('quantity-action')}>
-                                                <Button className={cx('decrease')}> - </Button>
-                                                <span className={cx('number')}> 5 </span>
-                                                <Button className={cx('increase')}> + </Button>
-                                            </div>
-                                        </div>
-                                        <div className={cx('policy')}>
-                                            <h4 className={cx('promotion')}>Khuyến mãi</h4>
-                                            <p className={cx('policy-detail')}>
-                                                {`FLASH SALE: Tặng voucher 500.000đ giảm trực tiếp vào giá máy
-                                                Duy nhất tại Dienthoaihay: iPhone chính hãng VN/A rẻ như hàng cũ xách tay
-                                                Trợ giá mua củ sạc nhanh 20W PD chính hãng chỉ 250k
-                                                Trả góp nhanh, lãi suất 0% qua thẻ tín dụng
-                                                Mua Online: Giao hàng tận nhà- Nhận hàng thanh toán`}
-                                            </p>
-                                        </div>
+        <WarpperStyled>{
+            loaded && 
+            <WarpperDetailStyled>
+                <WarpperLinkStyled>
+                    <Link className={cx('product-link')} to={'/'}>
+                        Trang chủ
+                    </Link>
+                    <span> &gt; </span>
+                    <Link className={cx('product-link')} to={'/'}>
+                        iPhone
+                    </Link>
+                    <span> &gt; </span>
+                    <Link className={cx('product-link')} to={'/'}>
+                        iPhone 13 ProMax
+                    </Link>
+                </WarpperLinkStyled>
+                 
 
-                                        <div className={cx('btn')}>
-                                            <Button primary>Thêm vào giỏ hàng</Button>
-                                            <Button buy small>
-                                                Mua ngay
-                                            </Button>
-                                        </div>
-                                    </div>
+                {/* Khung chia tiết sản phẩm */}
+                <DetailStyled>
+                    <Row className='product'>
+                        <Col span={8}> 
+                            <Image className='product__img' src={detail.phone.imgUrl} width={400} height={500} ></Image> 
+                        </Col>
+                        <Col span={10}>
+                            <Row><Typography.Title level={3}>{detail.phone.name}</Typography.Title></Row>
+                            <Row >
+                                <Typography.Title level={3} type='danger' className='product__gia'>{formatVND(price)}</Typography.Title>
+                            </Row>
+                            <Row >
+                           
+                            <Col span={4}> <Typography.Text className='product__tinhTrang'>Tình trạng</Typography.Text></Col>
+                            <Col span={4}> <Typography.Text  className='product__tinhTrang'>{quantity?'Còn hàng':'Hết hàng'}</Typography.Text></Col>
+                            </Row>
+                            <Row>
+                                <ButtonStyled lassName='product__mau'>
+                                    <Col span={4}><Typography.Text>Chọn màu</Typography.Text></Col>
+                                    <Col span={20}> 
+                                        {colors.map(color => (
+                                        <Button className={`mau ${selectedColor == color.id? 'selected': ''}`} key={color.id} data-id={color.id}  data-name={color.name} shape='circle' onClick={handleSelectColor} size='large' >{color.name}</Button>
+                                        ))}
+                                    </Col>
+                                </ButtonStyled>
+                            </Row>
+                            <Row >
+                                <ButtonStyled className='product__boNho'> 
+                                    <Col span={4}><Typography.Text >Bộ nhớ</Typography.Text></Col>
+                                    
+                                    <Col span={20}>
+                                        {selectedColor? boNhos.map(boNho => (
+                                                    <Button className={`boNho ${(selectedRam == boNho.ramId && selectedRom == boNho.romId)? 'selected': ''}`} 
+                                                        key={boNho.id} 
+                                                        size='large'  
+                                                        data-ramid={boNho.ramId} 
+                                                        data-romid={boNho.romId} 
+                                                        data-percentprice={boNho.percentPrice} 
+                                                        onClick={handleSelectBoNho}  
+                                                        ghost 
+                                                        danger>
+                                                            {boNho.ram}/{boNho.rom}
+                                                    </Button>
+                                        )):<Typography.Text >Vui lòng chọn màu!</Typography.Text>}
+                                    </Col>
+                                </ButtonStyled>
+                            </Row>
+                            <Row >
+                                <ButtonStyled className='product__soLuong'>
+                                    <Col span={4}><Typography.Text >Số lượng</Typography.Text></Col>
+                                    <Col span={20}> 
+                                        <Button icon={<MinusOutlined></MinusOutlined>} onClick={handleDecrease}></Button>
+                                        <Input
+                                            value={quantitySelect}
+                                            size='small'
+                                            onChange={handleInputChangeQuanity} 
+                                        />
+                                        <Button icon={<PlusOutlined></PlusOutlined>} onClick={handleIncrease}></Button>
+                                    </Col>
+                                   
+                                </ButtonStyled>
+                            </Row>
+                            <Row >
+                                <ButtonStyled> 
+                                    <Col span={4}><Typography.Text >{(selectedColor && selectedRam && selectedRom && variant)?variant.quantity:quantity}</Typography.Text></Col>
+                                </ButtonStyled>
+                            </Row>
+                            <Row>
+                                <DescriptionsStyled title='Khuyến mãi' bordered >
+                                    <Descriptions.Item className='product__noiDungKhuyenMai'>FLASH SALE: Tặng voucher 500.000đ giảm trực tiếp vào giá máy
+                                    Duy nhất tại Dienthoaihay: iPhone chính hãng VN/A rẻ như hàng cũ xách tay
+                                    Trợ giá mua củ sạc nhanh 20W PD chính hãng chỉ 250k
+                                    Trả góp nhanh, lãi suất 0% qua thẻ tín dụng
+                                    Mua Online: Giao hàng tận nhà- Nhận hàng thanh toán
+                                    Thẻ SIM: Nano + eSim Màn hình: 6.7 inches, Super Retina XDR OLED, 120Hz, HDR10, Dolby</Descriptions.Item>
+                                </DescriptionsStyled>
+                                {/* <Typography.Text className='product__khuyenMai'>Khuyến mãi</Typography.Text>
+                                <Typography.Text className='product__noiDungKhuyenMai'>
+                                    FLASH SALE: Tặng voucher 500.000đ giảm trực tiếp vào giá máy
+                                    Duy nhất tại Dienthoaihay: iPhone chính hãng VN/A rẻ như hàng cũ xách tay
+                                    Trợ giá mua củ sạc nhanh 20W PD chính hãng chỉ 250k
+                                    Trả góp nhanh, lãi suất 0% qua thẻ tín dụng
+                                    Mua Online: Giao hàng tận nhà- Nhận hàng thanh toán
+                                    Thẻ SIM: Nano + eSim Màn hình: 6.7 inches, Super Retina XDR OLED, 120Hz, HDR10, Dolby
+                             
+                                </Typography.Text> */}
+                            </Row>
+
+                            <Row>
+                                <Col span={24}>
+                                    <WarpperButtonHandleStyled>
+                                        <Button className='btn btn_add' size='large' onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>
+                                        <Button className='btn btn_buy' size='large'>Mua ngay</Button>
+                                    </WarpperButtonHandleStyled>
                                 </Col>
+                               
                             </Row>
                         </Col>
 
-                        <Col lg={4} className={cx('product-parameter')}>
-                            <h3>Thông số kỹ thuật</h3>
-                            <p className={cx('parameter-detail')}>
+                        <Col span={6}>
+                            <WarpperThongSoStyled>
+                                <DescriptionsStyled bordered column={1}>
+                                    <Descriptions.Item className='product_thongSo'>Thông số kỹ thuật</Descriptions.Item>
+                                    <Descriptions.Item className='product__noiDungThongSo'>FLASH SALE: Tặng voucher 500.000đ giảm trực tiếp vào giá máy
+                                    Duy nhất tại Dienthoaihay: iPhone chính hãng VN/A rẻ như hàng cũ xách tay
+                                    Trợ giá mua củ sạc nhanh 20W PD chính hãng chỉ 250k
+                                    Trả góp nhanh, lãi suất 0% qua thẻ tín dụng
+                                    Mua Online: Giao hàng tận nhà- Nhận hàng thanh toán
+                                    Thẻ SIM: Nano + eSim Màn hình: 6.7 inches, Super Retina XDR OLED, 120Hz, HDR10, Dolby</Descriptions.Item>
+                                </DescriptionsStyled>
+                            </WarpperThongSoStyled>
+                           
+                            {/* <Row><Typography.Text>Thông tin sản phẩm</Typography.Text></Row>
+                            <Row>
+                            <Typography.Text>
                                 Thẻ SIM: Nano + eSim Màn hình: 6.7 inches, Super Retina XDR OLED, 120Hz, HDR10, Dolby
                                 Vision Độ phân giải: 1284 x 2778 pixels, tỷ lệ 19.5:9 CPU: Apple A15 Bionic (5 nm) RAM:
                                 6GB Bộ nhớ/ Thẻ nhớ: 128/256/512GB/1TB Camera sau: 12 MP, f/1.5, 26mm (wide), 1.9µm,
                                 dual pixel PDAF, sensor-shift OIS, 12 MP, 12 MP
-                            </p>
+                                Thẻ SIM: Nano + eSim Màn hình: 6.7 inches, Super Retina XDR OLED, 120Hz, HDR10, Dolby
+                                Vision Độ phân giải: 1284 x 2778 pixels, tỷ lệ 19.5:9 CPU: Apple A15 Bionic (5 nm) RAM:
+                                6GB Bộ nhớ/ Thẻ nhớ: 128/256/512GB/1TB Camera sau: 12 MP, f/1.5, 26mm (wide), 1.9µm,
+                                dual pixel PDAF, sensor-shift OIS, 12 MP, 12 MP
+                                
+                            </Typography.Text>
+                            </Row> */}
                         </Col>
                     </Row>
-                </div>
-            </div>
+                </DetailStyled>
+                
 
-            <Link to={'/productdetail'} className={cx('product-relate')}>
-                <h3> Sản phẩm liên quan</h3>
-
-                <Row gutter={24}>
-                    <Col lg={4} className={cx('translate-col')}>
-                        <img
-                            src="data:image/jpeg;base64,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"
-                            className={cx('pr-image')}
-                            alt="iphone13"
-                        ></img>
-                        <h3 className={cx('pr-header')}>iPhone 13</h3>
-                        <div className={cx('pr-actions')}>
-                            <div className={cx('pr-price')}>20.000.000</div>
-                            <div className={cx('pr-promotion')}>50% off</div>
-                        </div>
-                    </Col>
-                    <Col lg={4} className={cx('translate-col')}>
-                        <img
-                            src="data:image/jpeg;base64,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"
-                            className={cx('pr-image')}
-                            alt="iphone13"
-                        ></img>
-                        <h3 className={cx('pr-header')}>iPhone 13</h3>
-                        <div className={cx('pr-actions')}>
-                            <div className={cx('pr-price')}>20.000.000</div>
-                            <div className={cx('pr-promotion')}>50% off</div>
-                        </div>
-                    </Col>
-                    <Col lg={4} className={cx('translate-col')}>
-                        <img
-                            src="data:image/jpeg;base64,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"
-                            className={cx('pr-image')}
-                            alt="iphone13"
-                        ></img>
-                        <h3 className={cx('pr-header')}>iPhone 13</h3>
-                        <div className={cx('pr-actions')}>
-                            <div className={cx('pr-price')}>20.000.000</div>
-                            <div className={cx('pr-promotion')}>50% off</div>
-                        </div>
-                    </Col>
-                    <Col lg={4} className={cx('translate-col')}>
-                        <img
-                            src="data:image/jpeg;base64,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"
-                            className={cx('pr-image')}
-                            alt="iphone13"
-                        ></img>
-                        <h3 className={cx('pr-header')}>iPhone 13</h3>
-                        <div className={cx('pr-actions')}>
-                            <div className={cx('pr-price')}>20.000.000</div>
-                            <div className={cx('pr-promotion')}>50% off</div>
-                        </div>
-                    </Col>
-                    <Col lg={4} className={cx('translate-col')}>
-                        <img
-                            src="data:image/jpeg;base64,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"
-                            className={cx('pr-image')}
-                            alt="iphone13"
-                        ></img>
-                        <h3 className={cx('pr-header')}>iPhone 13</h3>
-                        <div className={cx('pr-actions')}>
-                            <div className={cx('pr-price')}>20.000.000</div>
-                            <div className={cx('pr-promotion')}>50% off</div>
-                        </div>
-                    </Col>
-                    <Col lg={4} className={cx('translate-col')}>
-                        <img
-                            src="data:image/jpeg;base64,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"
-                            className={cx('pr-image')}
-                            alt="iphone13"
-                        ></img>
-                        <h3 className={cx('pr-header')}>iPhone 13</h3>
-                        <div className={cx('pr-actions')}>
-                            <div className={cx('pr-price')}>20.000.000</div>
-                            <div className={cx('pr-promotion')}>50% off</div>
-                        </div>
-                    </Col>
-                </Row>
-            </Link>
-
-            <div className={cx('descrip')}>
-                <h3 className={cx('des-header')}>Chi tiết sản phẩm</h3>
-                <p className={cx('des-detail')}>
-                    Điện thoại iPhone 13 Pro cũ (128GB | 256GB | 512GB) Chính hãng Giá rẻ Hà Nội, Tp.HCM, Đà Nẵng. Mua
-                    iPhone 13 Pro BH lên tới 12 tháng, hỗ trợ trả góp 0%. iPhone 13 Pro được ra mắt vào ngày 24/9/2021
-                    với những nâng cấp lớn so với thế hệ tiền nhiệm. Chiếc máy này sở hữu thiết kế cao cấp với các cạnh
-                    viền vuông vức và hai mặt kính cường lực cao cấp. iPhone 13 Pro đã được nâng cấp lên tần số quét
-                    120Hz đi kèm màn hình 6.1 inch, phần tai thỏ được làm nhỏ hơn giúp hiển thị thêm nhiều thông tin.
-                    Điểm khiến người dùng thích thú hơn cả là con chip Apple A15 sẽ là nguồn cung cấp sức mạnh cho
-                    iPhone 13 Pro. Một con chip với hiệu năng vô cùng mạnh mẽ. Cho đến thời điểm hiện tại, iPhone 13 Pro
-                    cũ vân là một mối quan tâm lớn và nhận được rất nhiều sự yêu thích của người dùng
-                </p>
-            </div>
-
-            <div className={cx('comments')}>
-                <h3 className={cx('header-comment')}>Bình luận</h3>
-                <Comments></Comments>
-            </div>
-        </div>
+            </WarpperDetailStyled>
+        }</WarpperStyled>
+      
     );
 }
 
