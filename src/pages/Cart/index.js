@@ -3,12 +3,14 @@ import classNames from 'classnames/bind';
 import 'antd/dist/antd.min.css';
 import { Checkbox, Col, Row , Button, Input} from 'antd';
 import { MinusOutlined, PlusOutlined, LeftOutlined } from '@ant-design/icons';
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import styles from './Cart.module.scss';
 import { AuthContext } from '~/Context/AuthProvider';
 import { AppContext } from '~/Context/AppProvider';
 import formatVND from '~/utilis';
+import { useLocalStorage } from '~/hooks/useLocalStorage';
 const cx = classNames.bind(styles);
 
 const WarpperButtonStyled = styled.div`
@@ -35,15 +37,16 @@ function totalMoney(cartIds, carts) {
     return total;
 }
 function Cart() {
-    const {user} = React.useContext(AuthContext);
-    const [phones, setPhones] = useState([]);
-    const {carts} = React.useContext(AppContext);
+    const [savedLocalCheckout, setSavedLocalCheckout, clearLocalStorage] = useLocalStorage('checkout');
+    const navigate = useNavigate();
+    const {carts, cartId, setCartId} = React.useContext(AppContext);
     const [checkedList, setCheckedList] = useState([]);
     const [indeterminate, setIndeterminate] = useState(false);
     const [checkAll, setCheckAll] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
     const onChange = (checkedValues) => {
         
+        setCartId(checkedValues);
         setCheckedList(checkedValues);
         setTotalPrice(totalMoney(checkedValues, carts))
         setCheckAll(checkedValues.length === Object.keys(carts).length);
@@ -55,14 +58,26 @@ function Cart() {
             const ids = carts.map(cart => cart.id);
             return ids;
         }
-        console.log(cartIds());
-        setCheckedList(cartIds())
-        setTotalPrice(totalMoney(cartIds(), carts))
+        
+        setCartId(e.target.checked?cartIds():[]);
+        setCheckedList(e.target.checked?cartIds():0)
+        setTotalPrice(e.target.checked ?totalMoney(cartIds(), carts):0);
         setIndeterminate(false);
         setCheckedList(e.target.checked ? cartIds() : []);
         setCheckAll(e.target.checked);
     };
 
+    const handleCheckout = () => {
+        console.log('Selected cartid', cartId)
+        if (cartId.length > 0) {
+            console.log("checkout oke");
+            setSavedLocalCheckout(carts.filter(cart => (cartId.includes(cart.id))&&cart));
+            navigate('/checkout')
+        } else {
+            console.log("Checkout not oke")
+        }
+    }
+    console.log('list ID cart',checkedList)
     return (
         <div className={cx('cart')}>
             <h3 className={cx('header')}>Giỏ hàng của bạn</h3>
@@ -142,7 +157,9 @@ function Cart() {
                 </div>
             </div>
             <div className={cx('btn-buy')}>
-                <Button>Mua hàng</Button>
+                {/* <Link preventScrollReset={true} to={'/checkout'} onClick={()=>{window.location.reload()}}> */}
+                    <Button onClick={handleCheckout}>Mua hàng</Button>
+                {/* </Link> */}
             </div>
         </div>
     );

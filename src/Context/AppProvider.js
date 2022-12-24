@@ -7,7 +7,9 @@ export default function AppProvider({ children }) {
 
     const {user} = React.useContext(AuthContext);
     const [carts, setCarts] = useState([]);
-    const [cartId, setCartId] = useState(0);
+    const [cartChange, setCartChange] = useState(0);
+    const [cartId, setCartId] = useState([]);
+    const [isOrdering, setIsOrdering] = useState([]);
     // console.log(user);
     useEffect(() => {
         if (user) {
@@ -17,11 +19,10 @@ export default function AppProvider({ children }) {
             .catch(err => console.log(err))
         }
         console.log( carts)
-    }, [user, cartId])
-
-    console.log("App",cartId)
+    }, [user, cartChange, isOrdering])
+    
     return (
-        <AppContext.Provider value={{carts, setCartId}}>
+        <AppContext.Provider value={{carts, setCartChange, cartId ,setCartId, setIsOrdering}}>
               {children}
         </AppContext.Provider>
           

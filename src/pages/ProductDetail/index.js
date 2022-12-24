@@ -27,20 +27,35 @@ const WarpperDetailStyled = Styled.div`
 `;
 const DetailStyled = Styled.div`
     border-radius: 25px !important;
-    padding: 10px 10px;
+    // padding: 10px 10px;
     margin-top: 10px;
     .product {
-        // &__img {
-            
-        //     box-shadow: 4px 4px #787A7A;
-        // }
+        
+        Col {
+            height: 51px;
+        }
+        &__ten, &__tinhTrang, &__mau_tieuDe,&__gia, &__boNho, &__soLuong {
+            margin-left: 10px;
+        }
+
+    
         &__soLuong Input {
             border: none;
             text-align: center;
-            width: 10%;
+            width: 20px;
         }
       
 
+    }
+
+    .error {
+        background: #ffcdd2;
+        color: #fff;
+    }
+    .errContent {
+        text-align: center;
+        padding-bottom: 5px;
+      
     }
 `;
 const WarpperLinkStyled = Styled.div`
@@ -56,11 +71,13 @@ const DescriptionsStyled = Styled(Descriptions)`
        margin: 0;
        background: #DEDEDE;
        text-align: justify;
+      
     }
 
     .product_thongSo, .product__noiDungThongSo{
         margin: 0;
         background: #DEDEDE;
+       
     }
 
     .product_thongSo {
@@ -88,6 +105,11 @@ const ButtonStyled = Styled.div`
         margin-right:5px;
     }
 
+    .mau {
+        width: 10px;
+        height: auto;
+        font-size: 10px;
+    }
     .selected {
         background: #2a254b !important;
         color: #fff;
@@ -160,7 +182,7 @@ function unique(variants) {
 function ProcductDetail(props) {
 
     const {user} = React.useContext(AuthContext);
-    const {setCartId} = React.useContext(AppContext);
+    const {setCartChange} = React.useContext(AppContext);
 
     const [detail, setDetail] = useState([]);
     const [price, setPrice] = useState(0);
@@ -173,6 +195,7 @@ function ProcductDetail(props) {
     const [selectedRom, setSelectedRom] =useState(0);
     const [variant, setVariant] = useState({});
     const [quantity, setQuantity] = useState();
+    const [isError, setIsError] = useState(false);
 
     const params = useParams()
     const slug = params.slug;
@@ -339,12 +362,15 @@ function ProcductDetail(props) {
                 };
                 fetch('/api/cart', requestOptions)
                     .then(response => response.json())
-                    .then(data => setCartId(data));
+                    .then(data => setCartChange(data.data.id));
             }
             
         } else {
+            
             console.log('đã logout');
         }
+
+        setIsError(!(selectedColor && selectedRam && selectedRom)?true:false)
 
     }
     return (
@@ -373,7 +399,7 @@ function ProcductDetail(props) {
                             <Image className='product__img' src={detail.phone.imgUrl} width={400} height={500} ></Image> 
                         </Col>
                         <Col span={10}>
-                            <Row><Typography.Title level={3}>{detail.phone.name}</Typography.Title></Row>
+                            <Row><Typography.Title className='product__ten'level={3}>{detail.phone.name}</Typography.Title></Row>
                             <Row >
                                 <Typography.Title level={3} type='danger' className='product__gia'>{formatVND(price)}</Typography.Title>
                             </Row>
@@ -382,57 +408,64 @@ function ProcductDetail(props) {
                             <Col span={4}> <Typography.Text className='product__tinhTrang'>Tình trạng</Typography.Text></Col>
                             <Col span={4}> <Typography.Text  className='product__tinhTrang'>{quantity?'Còn hàng':'Hết hàng'}</Typography.Text></Col>
                             </Row>
-                            <Row>
-                                <ButtonStyled lassName='product__mau'>
-                                    <Col span={4}><Typography.Text>Chọn màu</Typography.Text></Col>
-                                    <Col span={20}> 
-                                        {colors.map(color => (
-                                        <Button className={`mau ${selectedColor == color.id? 'selected': ''}`} key={color.id} data-id={color.id}  data-name={color.name} shape='circle' onClick={handleSelectColor} size='large' >{color.name}</Button>
-                                        ))}
+                            <div className={`${isError?'error':''}`}>
+                                <Row>
+                                    <ButtonStyled lassName='product__mau'>
+                                        <Col span={4}><Typography.Text className='product__mau_tieuDe'>Chọn màu</Typography.Text></Col>
+                                        <Col span={20}> 
+                                            {colors.map(color => (
+                                            <Button className={`mau ${selectedColor == color.id? 'selected': ''}`} key={color.id} data-id={color.id}  data-name={color.name} shape='circle' onClick={handleSelectColor} size='large' >{color.name}</Button>
+                                            ))}
+                                        </Col>
+                                    </ButtonStyled>
+                                </Row>
+                                <Row >
+                                    <ButtonStyled className='product__boNho'> 
+                                        <Col span={4}><Typography.Text >Bộ nhớ</Typography.Text></Col>
+                                        
+                                        <Col span={20}>
+                                            {selectedColor? boNhos.map(boNho => (
+                                                        <Button className={`boNho ${(selectedRam == boNho.ramId && selectedRom == boNho.romId)? 'selected': ''}`} 
+                                                            key={boNho.id} 
+                                                            size='large'  
+                                                            data-ramid={boNho.ramId} 
+                                                            data-romid={boNho.romId} 
+                                                            data-percentprice={boNho.percentPrice} 
+                                                            onClick={handleSelectBoNho}  
+                                                            ghost 
+                                                            danger>
+                                                                {boNho.ram}/{boNho.rom}
+                                                        </Button>
+                                            )):<Typography.Text type="danger">Vui lòng chọn màu!</Typography.Text>}
+                                        </Col>
+                                    </ButtonStyled>
+                                </Row>
+                                <Row >
+                                    <Col span={24}>
+                                    <ButtonStyled className='product__soLuong'>
+                                        <Col span={4}><Typography.Text >Số lượng</Typography.Text></Col>
+                                        <Col span={4}> 
+                                            <Button icon={<MinusOutlined></MinusOutlined>} onClick={handleDecrease}></Button>
+                                            <Input
+                                                value={quantitySelect}
+                                                size='small'
+                                                onChange={handleInputChangeQuanity} 
+                                            />
+                                            <Button icon={<PlusOutlined></PlusOutlined>} onClick={handleIncrease}></Button>
+                                        </Col>
+                                        <Col>
+                                            <Typography.Text >{(selectedColor && selectedRam && selectedRom && variant)?variant.quantity:quantity} Sản phẩm sẵn có</Typography.Text>
+                                        </Col>
+                                    </ButtonStyled>
                                     </Col>
-                                </ButtonStyled>
-                            </Row>
-                            <Row >
-                                <ButtonStyled className='product__boNho'> 
-                                    <Col span={4}><Typography.Text >Bộ nhớ</Typography.Text></Col>
                                     
-                                    <Col span={20}>
-                                        {selectedColor? boNhos.map(boNho => (
-                                                    <Button className={`boNho ${(selectedRam == boNho.ramId && selectedRom == boNho.romId)? 'selected': ''}`} 
-                                                        key={boNho.id} 
-                                                        size='large'  
-                                                        data-ramid={boNho.ramId} 
-                                                        data-romid={boNho.romId} 
-                                                        data-percentprice={boNho.percentPrice} 
-                                                        onClick={handleSelectBoNho}  
-                                                        ghost 
-                                                        danger>
-                                                            {boNho.ram}/{boNho.rom}
-                                                    </Button>
-                                        )):<Typography.Text >Vui lòng chọn màu!</Typography.Text>}
-                                    </Col>
-                                </ButtonStyled>
-                            </Row>
-                            <Row >
-                                <ButtonStyled className='product__soLuong'>
-                                    <Col span={4}><Typography.Text >Số lượng</Typography.Text></Col>
-                                    <Col span={20}> 
-                                        <Button icon={<MinusOutlined></MinusOutlined>} onClick={handleDecrease}></Button>
-                                        <Input
-                                            value={quantitySelect}
-                                            size='small'
-                                            onChange={handleInputChangeQuanity} 
-                                        />
-                                        <Button icon={<PlusOutlined></PlusOutlined>} onClick={handleIncrease}></Button>
-                                    </Col>
-                                   
-                                </ButtonStyled>
-                            </Row>
-                            <Row >
-                                <ButtonStyled> 
-                                    <Col span={4}><Typography.Text >{(selectedColor && selectedRam && selectedRom && variant)?variant.quantity:quantity}</Typography.Text></Col>
-                                </ButtonStyled>
-                            </Row>
+                                </Row>
+                                {isError&&<Row className='errContent'>
+                                    <Col span={24}><Typography.Text  type='danger'>Vui lòng chọn</Typography.Text></Col>
+                                </Row>}
+                            </div>
+                           
+                           
                             <Row>
                                 <DescriptionsStyled title='Khuyến mãi' bordered >
                                     <Descriptions.Item className='product__noiDungKhuyenMai'>FLASH SALE: Tặng voucher 500.000đ giảm trực tiếp vào giá máy
