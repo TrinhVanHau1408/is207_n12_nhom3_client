@@ -46,6 +46,7 @@ function totalMoney(cartIds, carts) {
 }
 function Cart() {
     const [savedLocalCheckout, setSavedLocalCheckout, clearLocalStorage] = useLocalStorage('checkout');
+    const [savedLocalUser, setSavedLocalUser, clearLocalStorageUser] = useLocalStorage('user');
     const navigate = useNavigate();
     const { carts, cartId, setCartId, cartChange } = React.useContext(AppContext);
     const [checkedList, setCheckedList] = useState([]);
@@ -60,8 +61,30 @@ function Cart() {
     }, [cartChange]);
 
     const handleDecrease = (e) => {
-        console.log(e.currentTarget.dataset.id);
-        
+        const id= e.currentTarget.dataset.id;
+        const cartSelected =carts.filter(cart => {
+            if (cart.id == id) return cart;
+        })
+
+        console.log('ccc',cartSelected[0])
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                customerId: savedLocalUser().id,
+                item: {
+                    id: cartSelected[0].id,
+                    phoneDetailId: cartSelected[0].phoneDetailId,
+                    quantity: cartSelected[0].quantity -1,
+                    priceSale: cartSelected[0].price,
+                    totalMoney: cartSelected[0].price * cartSelected[0].quantitySelect,
+                },
+            }),
+        };
+        fetch('/api/cart', requestOptions)
+            .then((response) => response.json())
+            .then((data) => console.log(data));
+
     }
 
     const handleIncrease = (e) => {
