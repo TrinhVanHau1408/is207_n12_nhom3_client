@@ -4,8 +4,7 @@ import styles from './LogIn.module.scss';
 import styled from 'styled-components';
 import { FacebookFilled, GoogleOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Col, notification, Row, Typography } from 'antd';
-// import Button from '~/components/Button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { AuthContext } from '~/Context/AuthProvider';
 import { useLocalStorage } from '~/hooks/useLocalStorage';
 const cx = classNames.bind(styles);
@@ -24,12 +23,14 @@ const Btn = styled(Button)`
     }
 `;
 function LogIn() {
-    // const [savedLocalUser, setSavedLocalUser, clearLocalStorage] = useLocalStorage('user');
-    // const navigate = useNavigate();
+    const [savedLocalUser, setSavedLocalUser, clearLocalStorage] = useLocalStorage('user');
+    
     const [api, contextHolder] = notification.useNotification();
     const { setUserName, setPassword, isErrLogin } = React.useContext(AuthContext);
     const [nameInput, setNameInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
+
+
     const handleUserNameChange = (e) => {
         setNameInput(e.target.value);
     };
