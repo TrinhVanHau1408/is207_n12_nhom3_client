@@ -54,12 +54,16 @@ function Register() {
                 userName: nameInput,
                 email: emailInput,
                 phone: phoneInput,
-                passowrd: passowrdInput
+                password: passowrdInput
             })
         };
         fetch('/api/customer/register', requestOptions)
             .then(response => response.json())
-            .then(data => console.log(data));
+            .then(data => {
+                if (data.status == 0) {
+                   
+                }
+            });
     }
     
     return (
