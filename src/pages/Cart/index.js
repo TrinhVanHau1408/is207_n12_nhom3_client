@@ -46,10 +46,10 @@ function Cart() {
     const [totalPrice, setTotalPrice] = useState(0);
     
     if (checkedList.length<1) {
-        console.log('length', checkedList.length);
-        setCheckedList(cartChange)
+       
+        setCheckedList([cartChange])
     }
-    
+    console.log('length', checkedList.length);
     const onChange = (checkedValues) => {
         
         setCartId(checkedValues);
