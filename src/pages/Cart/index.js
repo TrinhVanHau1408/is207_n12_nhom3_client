@@ -59,6 +59,14 @@ function Cart() {
         setCartId([cartChange]);
     }, [cartChange]);
 
+    const handleDecrease = (e) => {
+        console.log(e.currentTarget.dataset.id);
+        
+    }
+
+    const handleIncrease = (e) => {
+        console.log(e.currentTarget.dataset.id);
+    }
     console.log('length', checkedList.length);
     const onChange = (checkedValues) => {
         setCartId(checkedValues);
@@ -138,9 +146,9 @@ function Cart() {
                                         </Col>
                                         <Col lg={4} className={cx('actions')}>
                                             <WarpperButtonStyled>
-                                                <Button icon={<MinusOutlined></MinusOutlined>}></Button>
+                                                <Button icon={<MinusOutlined></MinusOutlined>} data-id={cart.id} onClick={handleDecrease}></Button>
                                                 <Input value={cart.quantity} size="small" />
-                                                <Button icon={<PlusOutlined></PlusOutlined>}></Button>
+                                                <Button icon={<PlusOutlined></PlusOutlined>} data-id={cart.id} onClick={handleIncrease}></Button>
                                             </WarpperButtonStyled>
                                         </Col>
                                         <Col lg={4}>
