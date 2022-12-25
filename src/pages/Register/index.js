@@ -1,11 +1,26 @@
 import classNames from 'classnames/bind';
 import styles from './Register.module.scss';
 import { FacebookFilled, GoogleOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import styled from 'styled-components';
 
-import Button from '~/components/Button';
 import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
+
+const Btn = styled(Button)`
+    background-color: #2a254b;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+    width: 500px;
+    height: 50px;
+
+    :hover {
+        background-color: #6c678d;
+        color: #fff;
+    }
+`;
 
 function Register() {
     return (
@@ -24,9 +39,7 @@ function Register() {
                     <input type={'password'} className={cx('account')} placeholder="Nhập mật khẩu"></input>
                 </div>
 
-                <Button primary large style={{ marginTop: '20px' }}>
-                    Đăng ký
-                </Button>
+                <Btn>Đăng ký</Btn>
                 <br />
                 <Link className={cx('login')} to={'/login'}>
                     Đăng nhập
