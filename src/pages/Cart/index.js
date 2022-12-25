@@ -45,10 +45,14 @@ function Cart() {
     const [checkAll, setCheckAll] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
     
-    if (checkedList.length<1) {
-       
+    useEffect(() => {
         setCheckedList([cartChange])
-    }
+        setTotalPrice(totalMoney(checkedList, carts))
+        setCartId([cartChange]);
+    }, [cartChange])
+  
+        
+    
     console.log('length', checkedList.length);
     const onChange = (checkedValues) => {
         
