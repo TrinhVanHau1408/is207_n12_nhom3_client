@@ -36,9 +36,11 @@ function Register() {
     const [phoneInput, setPhoneInput] = useState();
     const [passowrdInput, setPasswordInput] = useState();
 
+    const [comfirmPassword, setComfirmPassword] =useState();
     const [errorName, setErrorName] = useState(false);
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorPhone, setErrorPhone] = useState(false);
+    const [validate, setValidate] = useState([]);
     //const [errorRetype, setErrorRetype] = useState(false);
 
     const handleOnchangNameInput = (e) => {
@@ -57,32 +59,71 @@ function Register() {
         setPasswordInput(e.target.value);
     };
 
+    const handleOnchangConfirmPassowrdInput = (e) => {
+        setComfirmPassword(e.target.value);
+    };
+
+    function validateUsername (userName) {
+        let formatUserName = /^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+        if (userName.match(formatUserName)) return true;
+        return false
+    }
+
+    function validateEmail (email) {
+        let formatEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (email.match(formatEmail)) return true;
+        return false
+    }
+
+    function validatePhoneNumer (phoneNumer) {
+        let formatPhoneNumer = /^[a-zA-Z0-9]*$/;
+        if (phoneNumer.match(formatPhoneNumer)) return true;
+        return false;
+    }
+
+    function validatePassword (password, confirmPassword) {
+        if (password === confirmPassword) return true;
+        return false;
+    }
+    
     const handleRegister = () => {
         console.log(nameInput, emailInput, phoneInput, passowrdInput);
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                userName: nameInput,
-                email: emailInput,
-                phone: phoneInput,
-                password: passowrdInput,
-            }),
-        };
-        fetch('/api/customer/register', requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                if (data.status == 0) {
-                    data.error.map((err) => {
-                        if (err == 1) setErrorName(true);
-                        if (err == 2) setErrorEmail(true);
-                        if (err == 3) setErrorPhone(true);
-                    });
-                } else {
-                    navigate('/login');
-                }
-            });
+        const error = [];
+        if (!validateUsername(nameInput)) error.push(1);
+        if (!validateEmail(emailInput)) error.push(2);
+        if (!validatePhoneNumer(phoneInput)) error.push(3);
+        if (!validatePassword(passowrdInput, comfirmPassword));
+        
+        if (error === null || error === undefined) {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userName: nameInput,
+                    email: emailInput,
+                    phone: phoneInput,
+                    password: passowrdInput,
+                }),
+            };
+            fetch('/api/customer/register', requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.status == 0) {
+                        data.error.map((err) => {
+                            if (err == 1) setErrorName(true);
+                            if (err == 2) setErrorEmail(true);
+                            if (err == 3) setErrorPhone(true);
+                        });
+                    } else {
+                        navigate('/login');
+                    }
+                });
+        } else {
+            setValidate(error)
+            console.log('errr', error.includes(1))
+        }
+       
     };
 
     return (
@@ -107,6 +148,11 @@ function Register() {
                                 *Tên người dùng đã tồn tại! Vui lòng nhập mới.
                             </Erro>
                         )}
+                        {validate.length>0 && validate.includes(1) && (
+                             <Erro classnName="error" type="danger">
+                             *Vui lòng nhập liền không dấu!
+                         </Erro>
+                        )}
                     </Row>
                     <Row>
                         <Input
@@ -119,6 +165,12 @@ function Register() {
                             <Erro classnName="error" type="danger">
                                 *Email đã tồn tại! Vui lòng nhập mới.
                             </Erro>
+                        )}
+
+                        {validate.length>0 && validate.includes(2) && (
+                             <Erro classnName="error" type="danger">
+                             *Vui lòng nhập dưới dạng demo@demo.demo!
+                         </Erro>
                         )}
                     </Row>
                     <Row>
@@ -134,6 +186,12 @@ function Register() {
                                 *Số điện thoại đã tồn tại! Vui lòng nhập mới.
                             </Erro>
                         )}
+
+                        {validate.length>0 && validate.includes(3) && (
+                             <Erro classnName="error" type="danger">
+                             *Vui lòng nhập đúng số điện thoại của bạn!
+                         </Erro>
+                        )}
                     </Row>
                     <Row>
                         <Input
@@ -143,8 +201,13 @@ function Register() {
                             onChange={handleOnchangPassowrdInput}
                         />
                     </Row>
+                        {validate.length>0 && validate.includes(4) && (
+                             <Erro classnName="error" type="danger">
+                             *Mật khẩu chưa khớp!
+                         </Erro>
+                        )}
                     <Row>
-                        <Input type={'password'} placeholder={'Nhập lại mật khẩu'} className={cx('account')} />
+                        <Input type={'password'} onChange={handleOnchangConfirmPassowrdInput} placeholder={'Nhập lại mật khẩu'} className={cx('account')} />
                     </Row>
                 </div>
 

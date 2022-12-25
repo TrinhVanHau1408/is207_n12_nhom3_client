@@ -127,20 +127,6 @@ const ButtonStyled = Styled.div`
     }
 `;
 
-// const InputStyled = Styled.div`
-//     display: flex;
-//     flex-direction: row;
-//     width: 100%;
-//     margin: 15px 0;
-//     color: #757575;
-//     Input {
-//         width: 50px;
-//         margin-right: 5px;
-//         text-align: center;
-//         align-items: center;
-//     }
-// `
-
 const WarpperButtonHandleStyled = Styled.div`
     margin: 20px 0;
     // display: flex;

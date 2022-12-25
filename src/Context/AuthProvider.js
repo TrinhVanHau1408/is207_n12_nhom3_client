@@ -14,6 +14,7 @@ export default function AuthProvider({ children }) {
     
     const [isLoading, setIsLoading] = useState(true);
     const [isLogout, setIsLogout] = useState(false)
+    const [isErrLogin, setIsErrLogin] = useState(false)
   
     
     React.useEffect(() => {
@@ -31,23 +32,25 @@ export default function AuthProvider({ children }) {
             fetch('/api/customer/login', requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.customer != null) { 
-                    console.log(Object.keys(data.customer).length)
-                    if (Object.keys(data.customer).length > 0) 
-                    {
-                        const {customer:{ id, name, imgUrl, gender, phoneNumber, email, address }} = data;
-    
-                        setUser({ id, name, imgUrl, gender, phoneNumber, email, address });
-    
-                        setSavedLocalUser({ id, name, imgUrl, gender, phoneNumber, email, address }); 
-    
-                        window.location.href = '/';
-                        console.log({ id, name, imgUrl, gender, phoneNumber, email, address })
-                        
-                    }
-                
-                    setIsLoading(false);
-                }})
+                    if (data.customer != null && data.customer != undefined) { 
+                  
+                        if (Object.keys(data.customer).length > 0) 
+                        {
+                            const {customer:{ id, name, imgUrl, gender, phoneNumber, email, address }} = data;
+        
+                            setUser({ id, name, imgUrl, gender, phoneNumber, email, address });
+        
+                            setSavedLocalUser({ id, name, imgUrl, gender, phoneNumber, email, address }); 
+        
+                            window.location.href = '/';
+                            console.log({ id, name, imgUrl, gender, phoneNumber, email, address })
+                            
+                        }
+                    
+                } else {
+                    setIsErrLogin(true)
+                }
+            })
                 setIsLoading(false);
         }
 
@@ -58,7 +61,7 @@ export default function AuthProvider({ children }) {
 
   
     return (
-        <AuthContext.Provider value={ {user, setUser , setUserName, setPassword, setIsLoading, setIsLogout } }>
+        <AuthContext.Provider value={ {user, setUser , setUserName, setPassword, setIsLoading, setIsLogout, isErrLogin } }>
               { false ? <Spin /> :children}
         </AuthContext.Provider>
           

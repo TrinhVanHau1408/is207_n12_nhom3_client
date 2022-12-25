@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './LogIn.module.scss';
 import styled from 'styled-components';
 import { FacebookFilled, GoogleOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Col, notification, Row, Typography } from 'antd';
 // import Button from '~/components/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '~/Context/AuthProvider';
@@ -24,9 +24,10 @@ const Btn = styled(Button)`
     }
 `;
 function LogIn() {
-    const [savedLocalUser, setSavedLocalUser, clearLocalStorage] = useLocalStorage('user');
-    const navigate = useNavigate();
-    const { user, setUser, setIsLoading, setUserName, setPassword } = React.useContext(AuthContext);
+    // const [savedLocalUser, setSavedLocalUser, clearLocalStorage] = useLocalStorage('user');
+    // const navigate = useNavigate();
+    const [api, contextHolder] = notification.useNotification();
+    const { setUserName, setPassword, isErrLogin } = React.useContext(AuthContext);
     const [nameInput, setNameInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
     const handleUserNameChange = (e) => {
@@ -42,8 +43,16 @@ function LogIn() {
         setUserName(nameInput);
         setPassword(passwordInput);
        
-        
     }
+
+    // useEffect(() => {
+    //     if (isErrLogin) {
+    //         // api.error({
+    //         //     message: 'Thêm vào giỏ hàng thành công',
+    //         //     duration: 2,
+    //         // });
+    // })
+
 
     return (
         <div className={cx('auth-form')}>
@@ -67,6 +76,11 @@ function LogIn() {
                     placeholder="Nhập mật khẩu"
                     onChange={handlePasswordChange}
                 ></input>
+                {isErrLogin&&<Row>
+                    <Col span={24} style={{textAlign: 'center', fontSize: '16px',marginBottom: '-10px'}}>
+                        <Typography.Text type='danger'>*Tên người dùng hoặc mật khẩu không đúng. Vui lòng nhập lại!</Typography.Text>
+                    </Col>
+                </Row>}
                 <br />
                 <div className={cx('acctions')}>
                     {/* <div className={cx('check-password')}>
