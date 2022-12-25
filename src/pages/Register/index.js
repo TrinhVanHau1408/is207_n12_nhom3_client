@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Register.module.scss';
 import { FacebookFilled, GoogleOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Input } from 'antd';
+import { Button, Input, Row, Col, Typography } from 'antd';
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 
 import { Link } from 'react-router-dom';
 
@@ -24,10 +25,14 @@ const Btn = styled(Button)`
 `;
 
 function Register() {
+    const navigate = useNavigate();
     const [nameInput, setNameInput,] = useState();
     const [emailInput, setEmailInput,] = useState();
     const [phoneInput, setPhoneInput,] = useState();
     const [passowrdInput, setPasswordInput,] = useState();
+    const [errorName,setErrorName] = useState(false);
+    const [errorEmail,setErrorEmail] = useState(false);
+    const [errorPhone,setErrorPhone] = useState(false);
 
     const handleOnchangNameInput = (e) => {
         setNameInput(e.target.value);
@@ -60,8 +65,17 @@ function Register() {
         fetch('/api/customer/register', requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 if (data.status == 0) {
-                   
+                   data.error.map(err => 
+                    {
+                        if (err == 1) setErrorName(true);
+                        if (err == 2) setErrorEmail(true)
+                        if (err == 3) setErrorPhone(true)
+                    })
+                }
+                else {
+                    navigate('/login');
                 }
             });
     }
@@ -76,10 +90,21 @@ function Register() {
             </div>
             <div className={cx('content')}>
                 <div className={cx('info')}>
-                    <Input type={'text'} className={cx('account')} onChange={handleOnchangNameInput} /> <br />
-                    <Input type={'email'} className={cx('account')} onChange={handleOnchangEmailInput}/><br />
-                    <Input type={'phone'} className={cx('account')} onChange={handleOnchangPhoneInput}/><br />
-                    <Input type={'password'} className={cx('account')} onChange={handleOnchangPassowrdInput}/>
+                    <Row>
+                        <Input type={'text'} className={cx('account')} onChange={handleOnchangNameInput} />
+                        {errorName&&<Typography.Text classnName={cx('error')} type='danger'>*Tên người dùng đã tồn tại! Vui lòng nhập mới.</Typography.Text>}
+                    </Row>
+                    <Row>
+                        <Input type={'email'} className={cx('account')} onChange={handleOnchangEmailInput}/>
+                        {errorEmail&&<Typography.Text classnName={cx('error')} type='danger'>*Email đã tồn tại! Vui lòng nhập mới.</Typography.Text>}
+                    </Row>
+                    <Row>
+                        <Input type={'phone'} className={cx('account')} onChange={handleOnchangPhoneInput}/><br />
+                        {errorPhone&&<Typography.Text classnName={cx('error')} type='danger'>*Số điện thoại đã tồn tại! Vui lòng nhập mới.</Typography.Text>}
+                    </Row>
+                    <Row>
+                        <Input type={'password'} className={cx('account')} onChange={handleOnchangPassowrdInput}/>
+                    </Row>
                 </div>
 
                 <Btn onClick={handleRegister}>Đăng ký</Btn>
