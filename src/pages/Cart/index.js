@@ -48,7 +48,7 @@ function Cart() {
     const [savedLocalCheckout, setSavedLocalCheckout, clearLocalStorage] = useLocalStorage('checkout');
     const [savedLocalUser, setSavedLocalUser, clearLocalStorageUser] = useLocalStorage('user');
     const navigate = useNavigate();
-    const { carts, cartId, setCartId, cartChange } = React.useContext(AppContext);
+    const { carts, cartId, setCartId, cartChange, setUpdatedQuannity } = React.useContext(AppContext);
     const [checkedList, setCheckedList] = useState([]);
     const [indeterminate, setIndeterminate] = useState(false);
     const [checkAll, setCheckAll] = useState(false);
@@ -61,12 +61,13 @@ function Cart() {
     }, [cartChange]);
 
     const handleDecrease = (e) => {
-        const id= e.currentTarget.dataset.id;
-        const cartSelected =carts.filter(cart => {
+        const id = e.currentTarget.dataset.id;
+        const cartSelected = carts.filter((cart) => {
             if (cart.id == id) return cart;
-        })
+        });
 
-        console.log('ccc',cartSelected[0])
+        console.log('ccc', cartSelected[0]);
+
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -75,9 +76,8 @@ function Cart() {
                 item: {
                     id: cartSelected[0].id,
                     phoneDetailId: cartSelected[0].phoneDetailId,
-                    quantity: cartSelected[0].quantity -1,
-                    priceSale: cartSelected[0].price,
-                    totalMoney: cartSelected[0].price * cartSelected[0].quantitySelect,
+                    quantity: cartSelected[0].quantity - 1,
+                    priceSale: cartSelected[0].priceSale,
                 },
             }),
         };
@@ -85,11 +85,12 @@ function Cart() {
             .then((response) => response.json())
             .then((data) => console.log(data));
 
-    }
+        setUpdatedQuannity(cartSelected[0].quantity - 1);
+    };
 
     const handleIncrease = (e) => {
         console.log(e.currentTarget.dataset.id);
-    }
+    };
     console.log('length', checkedList.length);
     const onChange = (checkedValues) => {
         setCartId(checkedValues);
@@ -169,9 +170,17 @@ function Cart() {
                                         </Col>
                                         <Col lg={4} className={cx('actions')}>
                                             <WarpperButtonStyled>
-                                                <Button icon={<MinusOutlined></MinusOutlined>} data-id={cart.id} onClick={handleDecrease}></Button>
+                                                <Button
+                                                    icon={<MinusOutlined></MinusOutlined>}
+                                                    data-id={cart.id}
+                                                    onClick={handleDecrease}
+                                                ></Button>
                                                 <Input value={cart.quantity} size="small" />
-                                                <Button icon={<PlusOutlined></PlusOutlined>} data-id={cart.id} onClick={handleIncrease}></Button>
+                                                <Button
+                                                    icon={<PlusOutlined></PlusOutlined>}
+                                                    data-id={cart.id}
+                                                    onClick={handleIncrease}
+                                                ></Button>
                                             </WarpperButtonStyled>
                                         </Col>
                                         <Col lg={4}>
