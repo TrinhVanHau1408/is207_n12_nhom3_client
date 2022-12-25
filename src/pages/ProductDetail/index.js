@@ -194,7 +194,7 @@ function unique(variants) {
 function ProcductDetail(props) {
     const [api, contextHolder] = notification.useNotification();
     const { user } = React.useContext(AuthContext);
-    const { setCartChange } = React.useContext(AppContext);
+    const { setCartChange, setSelectedCartId } = React.useContext(AppContext);
 
     const [detail, setDetail] = useState([]);
     const [price, setPrice] = useState(0);
@@ -346,7 +346,7 @@ function ProcductDetail(props) {
         }
     }, [selectedColor, selectedRam, selectedRom, detail]);
 
-    function storeOrrerApi() {
+    function storeOrrerApi(btn) {
         {
             const requestOptions = {
                 method: 'POST',
@@ -365,7 +365,7 @@ function ProcductDetail(props) {
             };
             fetch('/api/cart', requestOptions)
                 .then((response) => response.json())
-                .then((data) => setCartChange(data.data.id));
+                .then((data) => (btn == 'add') ? setCartChange(data.data.id): setSelectedCartId(data.data.id));
         }
     }
 
@@ -373,7 +373,7 @@ function ProcductDetail(props) {
     const handleAddToCart = () => {
         if (user != null) {
             if (selectedColor && selectedRam && selectedRom) {
-                storeOrrerApi();
+                storeOrrerApi('add');
                 api.success({
                     message: 'Thêm vào giỏ hàng thành công',
                     // description:
@@ -382,7 +382,7 @@ function ProcductDetail(props) {
                 });
             }
         } else {
-            console.log('đã logout');
+            navigate('/login');
             api.error({
                 message: 'Vui lòng đăng nhập',
                 // description:
@@ -395,9 +395,28 @@ function ProcductDetail(props) {
     };
 
     const handleBuy = () => {
-        storeOrrerApi();
-        navigate('/cart');
-        console.log('oke');
+
+        if (user != null) {
+            if (selectedColor && selectedRam && selectedRom) {
+                storeOrrerApi('buy');
+                api.success({
+                    message: 'Thêm vào giỏ hàng thành công',
+                    duration: 2,
+                });
+                navigate('/cart');
+            }
+        } else {
+            navigate('/login');
+            api.error({
+                message: 'Vui lòng đăng nhập',
+                // description:
+                //     'Cảm ơn quý khách đã tin tưởng!',
+                duration: 2,
+            });
+        }
+        setIsError(!(selectedColor && selectedRam && selectedRom) ? true : false);
+       
+       
     };
     return (
         <WarpperStyled>

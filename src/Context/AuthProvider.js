@@ -7,50 +7,59 @@ export const AuthContext = React.createContext();
 export default function AuthProvider({ children }) {
     const [savedLocalUser, setSavedLocalUser, clearLocalStorage] = useLocalStorage('user');
 
-    const [user, setUser] = useState(savedLocalUser()?savedLocalUser():{});
+    const [user, setUser] = useState(savedLocalUser());
    
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     
     const [isLoading, setIsLoading] = useState(true);
+    const [isLogout, setIsLogout] = useState(false)
   
+    
     React.useEffect(() => {
 
-            if (savedLocalUser() == null) {
-                console.log("null user")
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        userName: userName, 
-                        password: password
-                    })
-                };
-                fetch('/api/customer/login', requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
+        console.log({userName, password})
+        if (userName != '' && password != '') {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    userName: userName, 
+                    password: password
+                })
+            };
+            fetch('/api/customer/login', requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.customer != null) { 
+                    console.log(Object.keys(data.customer).length)
+                    if (Object.keys(data.customer).length > 0) 
+                    {
                         const {customer:{ id, name, imgUrl, gender, phoneNumber, email, address }} = data;
-
+    
                         setUser({ id, name, imgUrl, gender, phoneNumber, email, address });
-
-                        setSavedLocalUser({ id, name, imgUrl, gender, phoneNumber, email, address });
-                    });
-                    
-                    setIsLoading(false);
-                }
+    
+                        setSavedLocalUser({ id, name, imgUrl, gender, phoneNumber, email, address }); 
+    
+                        window.location.href = '/';
+                        console.log({ id, name, imgUrl, gender, phoneNumber, email, address })
+                        
+                    }
                 
+                    setIsLoading(false);
+                }})
                 setIsLoading(false);
-    }, [userName, password]);
+        }
 
-    // console.log('user', user)
-    // useEffect(() => {
-    //     if (!isLoading) setSavedLocalUser(user);
-    // }, [user, setSavedLocalUser])
-   
-    // console.log('auth', savedLocalUser(), userName, password)
+        }, [userName, password]);
+
+  
+        console.log('user', user)
+
+  
     return (
-        <AuthContext.Provider value={ {user, setUser , setUserName, setPassword, setIsLoading } }>
-              { isLoading ? <Spin /> :children}
+        <AuthContext.Provider value={ {user, setUser , setUserName, setPassword, setIsLoading, setIsLogout } }>
+              { false ? <Spin /> :children}
         </AuthContext.Provider>
           
     )

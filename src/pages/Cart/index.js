@@ -54,6 +54,9 @@ function Cart() {
     const [checkAll, setCheckAll] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
 
+    if (savedLocalUser() == null || savedLocalUser() == undefined) {
+        navigate('/login')
+    }
     useEffect(() => {
         setCheckedList([cartChange]);
         setTotalPrice(totalMoney(checkedList, carts));

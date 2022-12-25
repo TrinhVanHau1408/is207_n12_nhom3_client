@@ -7,6 +7,7 @@ import { Button } from 'antd';
 // import Button from '~/components/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '~/Context/AuthProvider';
+import { useLocalStorage } from '~/hooks/useLocalStorage';
 const cx = classNames.bind(styles);
 
 const Btn = styled(Button)`
@@ -23,8 +24,9 @@ const Btn = styled(Button)`
     }
 `;
 function LogIn() {
+    const [savedLocalUser, setSavedLocalUser, clearLocalStorage] = useLocalStorage('user');
     const navigate = useNavigate();
-    const { user, setIsLoading, setUserName, setPassword } = React.useContext(AuthContext);
+    const { user, setUser, setIsLoading, setUserName, setPassword } = React.useContext(AuthContext);
     const [nameInput, setNameInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
     const handleUserNameChange = (e) => {
@@ -36,17 +38,12 @@ function LogIn() {
     };
 
     const handleSubmit = () => {
+        console.log({nameInput,passwordInput})
         setUserName(nameInput);
         setPassword(passwordInput);
-
-        if (user) {
-            console.log(nameInput, passwordInput);
-            // console.log('login', user);
-            setIsLoading(false);
-
-            navigate('/');
-        }
-    };
+       
+        
+    }
 
     return (
         <div className={cx('auth-form')}>
