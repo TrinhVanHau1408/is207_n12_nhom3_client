@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import Tippy from '@tippyjs/react/headless';
-import { ShoppingCartOutlined,ShoppingOutlined, UserOutlined, Avata } from '@ant-design/icons';
+import { ShoppingCartOutlined, ShoppingOutlined, UserOutlined, Avata } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { Input } from 'antd';
 import { Wrapper as PopperWrapper } from '~/components/Poppers';
 // import { useEffect, useState } from 'react';
 import {Input} from 'antd';
@@ -19,36 +21,34 @@ function Header() {
     // const [searchResult, setSearchResult] = useState([]);
     // const [searchValue, setSearchValue] = useState('');
 
-    const [searchInput, setSearchInput] = useState('');
-
-    const handleSearchInput = (e) => {
-        
-            setTimeout(() => {
-                setSearchInput(e.target.value);
-            }, 50);
-    }
-
-    useEffect(() => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                   search: searchInput
-                }),
-            };
-            fetch('/api/phone/search', requestOptions)
-                .then((response) => response.json())
-                .then((data) => console.log(data));
-        
-    }, [searchInput])
-    
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setSearchResult([1, 2, 3]);
+    //     }, 0);
+    // }, []);
    
 
-    const {user} = React.useContext(AuthContext);
-    const {carts} = React.useContext(AppContext)
-    
-    if (carts) console.log('carts', Object.keys(carts).length)
-    
+    const handleOnChange = (e) => {
+        setTimeout(() => {
+            setSearchInput(e.target.value);
+        }, '1000');
+    };
+
+    useEffect(() => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                search: searchInput,
+            }),
+        };
+
+        fetch('/api/phone/search', requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(',,,', data);
+            });
+    }, [searchInput]);
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -78,34 +78,32 @@ function Header() {
                             placeholder="Tìm kiếm "
                             spellCheck={false}
                             // onChange={(e) => setSearchValue(e.target.value)}
-                            onCanPlayThroughCapture={handleSearchInput}
-                        />
+                        ></input>
                     </div>
                 </Tippy>
                 <div className={cx('product-cart')}>
                     <Link to="/cart">
                         <Button>
                             {/* <ShoppingCartOutlined className={cx('cart')} /> */}
-                            <ShoppingCartOutlined  className={cx('cart')} />
+                            <ShoppingCartOutlined className={cx('cart')} />
                             {/* <Icon icon="ant-design:shopping-cart-outlined" className={cx('cart')}/> */}
-                            {(carts)&&<div className={cx('quantity')}>{Object.keys(carts).length}</div>}
+                            {carts && <div className={cx('quantity')}>{Object.keys(carts).length}</div>}
                         </Button>
                     </Link>
                 </div>
-                {user? (
+                {user ? (
                     <div className={cx('current-user')}>
                         <Link to="/userinfo">
-                            
-                                {/* <UserOutlined
+                            {/* <UserOutlined
                                     style={{ fontSize: '25px', position: 'absolute', right: '12px', top: '12px' }}
                                 /> */}
                                 {/* <p style={{color: 'red'}}>{user?user.customer.name: 'oke'}</p> */}
-                                <Avatar size={64} style={{ backgroundColor: '#87d068' }} src={user.imgUrl} />
+                                <Avatar size={64} style={{ backgroundColor: '#87d068' }} src={user.imgUrl?user.imgUrl:'https://haycafe.vn/wp-content/uploads/2021/12/Hinh-nen-cute.jpg'} />
                                 
                             <p style={{color: '#fff'}}>{user&&user.name}</p>
                         </Link>
                     </div>
-                ):(
+                ) : (
                     <div className={cx('account')}>
                         <Link className={cx('login')} to="/login">
                             Đăng nhập{' '}

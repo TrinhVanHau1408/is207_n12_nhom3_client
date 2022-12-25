@@ -35,9 +35,11 @@ function Register() {
     const [emailInput, setEmailInput] = useState();
     const [phoneInput, setPhoneInput] = useState();
     const [passowrdInput, setPasswordInput] = useState();
+
     const [errorName, setErrorName] = useState(false);
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorPhone, setErrorPhone] = useState(false);
+    //const [errorRetype, setErrorRetype] = useState(false);
 
     const handleOnchangNameInput = (e) => {
         setNameInput(e.target.value);
@@ -128,9 +130,9 @@ function Register() {
                         />
                         <br />
                         {errorPhone && (
-                            <Typography.Text classnName={cx('error')} type="danger">
+                            <Erro classnName={cx('error')} type="danger">
                                 *Số điện thoại đã tồn tại! Vui lòng nhập mới.
-                            </Typography.Text>
+                            </Erro>
                         )}
                     </Row>
                     <Row>
@@ -140,6 +142,9 @@ function Register() {
                             className={cx('account')}
                             onChange={handleOnchangPassowrdInput}
                         />
+                    </Row>
+                    <Row>
+                        <Input type={'password'} placeholder={'Nhập lại mật khẩu'} className={cx('account')} />
                     </Row>
                 </div>
 
