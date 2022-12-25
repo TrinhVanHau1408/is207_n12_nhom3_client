@@ -441,7 +441,7 @@ function ProcductDetail(props) {
                     <DetailStyled>
                         <Row className="product">
                             <Col span={8}>
-                                <Img className="product__img" src={detail.phone.imgUrl}></Img>
+                                <Img preview={false} className="product__img" src={detail.phone.imgUrl}></Img>
                             </Col>
                             <Col span={10}>
                                 <Row>
