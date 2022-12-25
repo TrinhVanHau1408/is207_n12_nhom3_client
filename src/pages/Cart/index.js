@@ -39,11 +39,17 @@ function totalMoney(cartIds, carts) {
 function Cart() {
     const [savedLocalCheckout, setSavedLocalCheckout, clearLocalStorage] = useLocalStorage('checkout');
     const navigate = useNavigate();
-    const {carts, cartId, setCartId} = React.useContext(AppContext);
+    const {carts, cartId, setCartId, cartChange} = React.useContext(AppContext);
     const [checkedList, setCheckedList] = useState([]);
     const [indeterminate, setIndeterminate] = useState(false);
     const [checkAll, setCheckAll] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
+    
+    if (checkedList.length<1) {
+        console.log('length', checkedList.length);
+        setCheckedList(cartChange)
+    }
+    
     const onChange = (checkedValues) => {
         
         setCartId(checkedValues);

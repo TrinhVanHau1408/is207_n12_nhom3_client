@@ -4,9 +4,10 @@ import Styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { MinusOutlined, PlusOutlined} from '@ant-design/icons';
 import 'antd/dist/antd.min.css';
-import { Col, Row, Button, Image, Typography, Input, Descriptions } from 'antd';
+import { Col, Row, Button, Image, Typography, Input, Descriptions, notification } from 'antd';
 import { useParams } from 'react-router-dom';
 import Comments from '~/components/Comment';
+import { useNavigate } from "react-router-dom";
 import styles from './ProcductDetail.module.scss';
 import { AuthContext } from '~/Context/AuthProvider';
 import { AppContext } from '~/Context/AppProvider';
@@ -180,7 +181,7 @@ function unique(variants) {
     return phoneColor
  }
 function ProcductDetail(props) {
-
+    const [api, contextHolder] = notification.useNotification();
     const {user} = React.useContext(AuthContext);
     const {setCartChange} = React.useContext(AppContext);
 
@@ -200,6 +201,7 @@ function ProcductDetail(props) {
     const params = useParams()
     const slug = params.slug;
 
+    const navigate = useNavigate();
     // Call API Phone :slug
     useEffect(() => {
        fetch('/api/phone/'+slug)
@@ -342,41 +344,68 @@ function ProcductDetail(props) {
     }, [selectedColor, selectedRam, selectedRom, detail])
    
 
+    function storeOrrerApi() {{
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                customerId: user.id, 
+                item: {
+                    phoneId: detail.phone.id,
+                    phoneDetailId: variant.id,
+                    quantity: quantitySelect,
+                    priceSale: price,
+                    totalMoney: price * quantitySelect
+                }
+            })
+        };
+        fetch('/api/cart', requestOptions)
+            .then(response => response.json())
+            .then(data => setCartChange(data.data.id));
+
+    }}
+
     // Xử lý thêm vào giỏ hàng
     const handleAddToCart = () => {
-        if (user) {
+        if (user!=null) {
             if (selectedColor && selectedRam && selectedRom) {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        customerId: user.id, 
-                        item: {
-                            phoneId: detail.phone.id,
-                            phoneDetailId: variant.id,
-                            quantity: quantitySelect,
-                            priceSale: price,
-                            totalMoney: price * quantitySelect
-                        }
-                    })
-                };
-                fetch('/api/cart', requestOptions)
-                    .then(response => response.json())
-                    .then(data => setCartChange(data.data.id));
+               
+                storeOrrerApi();
+                api.success({
+                    message: 'Thêm vào giỏ hàng thành công',
+                    // description:
+                    //     'Cảm ơn quý khách đã tin tưởng!',
+                    duration: 2,
+                    });
             }
+
+            
             
         } else {
             
             console.log('đã logout');
+            api.error({
+                message: 'Vui lòng đăng nhập',
+                // description:
+                //     'Cảm ơn quý khách đã tin tưởng!',
+                duration: 2,
+              });
         }
 
         setIsError(!(selectedColor && selectedRam && selectedRom)?true:false)
 
     }
+
+    const handleBuy = () => {
+        storeOrrerApi();
+        navigate('/cart')
+        console.log("oke");
+    }
     return (
         <WarpperStyled>{
             loaded && 
             <WarpperDetailStyled>
+                {contextHolder}
                 <WarpperLinkStyled>
                     <Link className={cx('product-link')} to={'/'}>
                         Trang chủ
@@ -491,7 +520,7 @@ function ProcductDetail(props) {
                                 <Col span={24}>
                                     <WarpperButtonHandleStyled>
                                         <Button className='btn btn_add' size='large' onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>
-                                        <Button className='btn btn_buy' size='large'>Mua ngay</Button>
+                                        <Button className='btn btn_buy' size='large' onClick={handleBuy}>Mua ngay</Button>
                                     </WarpperButtonHandleStyled>
                                 </Col>
                                

@@ -10,6 +10,7 @@ export default function AppProvider({ children }) {
     const [cartChange, setCartChange] = useState(0);
     const [cartId, setCartId] = useState([]);
     const [isOrdering, setIsOrdering] = useState([]);
+    const [selectedOrderId, setSlectedOrder] = useState(0);
     // console.log(user);
     useEffect(() => {
         if (user) {
@@ -21,8 +22,9 @@ export default function AppProvider({ children }) {
         console.log( carts)
     }, [user, cartChange, isOrdering])
     
+    console.log('selected cart', cartChange)
     return (
-        <AppContext.Provider value={{carts, setCartChange, cartId ,setCartId, setIsOrdering}}>
+        <AppContext.Provider value={{carts, setCartChange, cartId ,setCartId, setIsOrdering, setSlectedOrder, cartChange  }}>
               {children}
         </AppContext.Provider>
           

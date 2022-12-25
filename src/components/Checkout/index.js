@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import images from '~/assets/images';
 import { AppContext } from '~/Context/AppProvider';
 import { useLocalStorage } from '~/hooks/useLocalStorage';
-import { Row, Col, Typography, Image, Input, Radio, Select, Button } from 'antd';
+import { Row, Col, Typography, Image, Input, Radio, Select, Button, notification } from 'antd';
 import Styled from 'styled-components';
 import formatVND from '~/utilis';
 
@@ -84,31 +84,48 @@ const WarpperProductStyled = Styled.div`
 
 
 function Checkout() {
+    const [api, contextHolder] = notification.useNotification();
     const [savedLocalCheckout, setSavedLocalCheckout, clearLocalStorage] = useLocalStorage('checkout');
     const [savedLocalUser, setSavedLocalUser, clearLocalStorageUser] = useLocalStorage('user');
     const {setIsOrdering} = React.useContext(AppContext);
     const [checkout, setCkeckout] = useState(savedLocalCheckout());
     const [user, setUser] = useState(savedLocalUser())
     const [shipMethod, setShipMethod] = useState([]);
+    const [feeShip, setFeeShip] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState([]);
     const [selectedPayment, setSelectedPayment] = useState(0);
+    const [selectedNamePayment, setSelectedNamePayment] = useState('');
     const [selectedAdress, setSelectedAress] = useState(1);
+    const [isLoadingMethod ,setIsLoaddingMethod] = useState(false);
     const [isCheckedShip, setIsCheckedShip] = useState(0);
+    const [totalMoney, setTotalMoney] = useState(checkout?checkout.reduce((total,ck)=> total+ck.totalMoney,0):0)
+ 
     // const {carts, cartId} = React.useContext(AppContext);
-   
+    if (!checkout) window.location.href='/';
     useEffect(() => {
        
             fetch('/api/ship')
             .then(data => data.json())
-            .then(res => setShipMethod(res))
+            .then(res => {
+                setShipMethod(res)
+                setIsCheckedShip(res[0].id)
+                setFeeShip(res[0].feePrice)
+            })
             .catch(err => console.log(err))
 
             fetch('/api/payment')
             .then(data => data.json())
-            .then(res => setPaymentMethod(res))
+            .then(res => {
+                
+                setPaymentMethod(res)
+                setSelectedNamePayment(res[0].name)
+                setSelectedPayment(res[0].id)
+                setIsLoaddingMethod(true)
+            })
             .catch(err => console.log(err))
 
-        
+           
+
     }, [])
 
     const handleOrder = () => {
@@ -132,6 +149,15 @@ function Checkout() {
                 .then(data => {
                     console.log(',,,',data)
                     setIsOrdering(checkout.map(ck => ck.id));
+                    clearLocalStorage();
+                   
+                });
+
+            api.open({
+                message: 'Đặt hàng thành công',
+                description:
+                    'Cảm ơn quý khách đã tin tưởng!',
+                duration: 0,
                 });
         }
         else {
@@ -143,12 +169,16 @@ function Checkout() {
     const handleChangePayment = (value) => {
         setSelectedPayment(value)
     }
-    console.log('selectedPayment', selectedPayment)
-    console.log('isCheckedShip', isCheckedShip)
-
-    console.log('checkout order', shipMethod)
+    console.log('paymentname', selectedNamePayment)
+    console.log('paymentname', isLoadingMethod)
+    // console.log('shipMethod', shipMethod)
+    // console.log('isCheckedShip', isCheckedShip)
+    // // console.log('freeShip', freeShip)
+    // console.log('totalMoney', totalMoney)
+    // console.log('paymentMethod', paymentMethod[0]?paymentMethod[0].id:'')
     return (
         <div className={styles.checkout}>
+             {contextHolder}
             <div className={styles.productInfo}>
                 {}
                 {/* <div className={styles.titleContainer}>
@@ -206,37 +236,6 @@ function Checkout() {
                     </WarpperProductStyled>
                    
                 ))}
-                {/* <div className={styles.itemContainer}>
-                    <div className={styles.itemLg}>ZEBRONICS Zeb-Reaper 2.4GHz Wireless Gaming Mouse</div>
-                    <div className={`${styles.itemLg} ${styles.hide}`}>
-                        <img className={styles.img} src={images.airpodspro} alt="airpodspro" />
-                    </div>
-                    <div className={styles.item}>2</div>
-                    <div className={styles.item}>40.000.000đ</div>
-                    <div className={styles.item}>80.000.000đ</div>
-                </div>
-                <div className={styles.itemContainer}>
-                    <div className={styles.itemLg}>ApplewatchS8 2.4GHz Wireless Gaming Mouse</div>
-                    <div className={`${styles.itemLg} ${styles.hide}`}>
-                        <img className={styles.img} src={images.applewatchS8} alt="airpodspro" />
-                    </div>
-                    <div className={styles.item}>2</div>
-                    <div className={styles.item}>40.000.000đ</div>
-                    <div className={styles.item}>80.000.000đ</div>
-                </div>
-                <div className={styles.itemContainer}>
-                    <div className={styles.itemLg}>ApplewatchS8 2.4GHz Wireless Gaming Mouse</div>
-                    <div className={`${styles.itemLg} ${styles.hide}`}>
-                        <img className={styles.img} src={images.applewatchS7} alt="airpodspro" />
-                    </div>
-                    <div className={styles.item}>2</div>
-                    <div className={styles.item}>40.000.000đ</div>
-                    <div className={styles.item}>80.000.000đ</div>
-                </div>
-                <div className={styles.priceContainer}>
-                    <div className={styles.priceContent}>Tổng tiền:</div>
-                    <div className={styles.totalPrice}>142.000.000đ</div>
-                </div> */}
             </div>
             <div className={styles.userInfo}>
                 <div className={styles.heading}>Thông tin đặt hàng</div>
@@ -270,7 +269,7 @@ function Checkout() {
                     <div className={styles.inputItemContainer}>
                         <span className={styles.title}>Phương thức thanh toán:</span>
                         <Select
-                        defaultValue="--Chọn--"
+                        defaultValue={isLoadingMethod?selectedNamePayment:'-Chọn-'}
                         style={{
                             width: 200,
                         }}
@@ -285,9 +284,9 @@ function Checkout() {
                    
                     <div className={styles.inputItemContainer}>
                         <span className={styles.title}>Vận chuyển:</span>
-                        <Radio.Group >
+                        <Radio.Group value={isCheckedShip}>
                             {shipMethod&&shipMethod.map(ship =>( 
-                                <Radio key={ship.id} value={ship.id} onChange={()=>setIsCheckedShip(ship.id)}>{ship.name}</Radio>
+                                <Radio key={ship.id} value={ship.id} onChange={()=>{setIsCheckedShip(ship.id); setFeeShip(ship.feePrice)}}>{ship.name}</Radio>
                             ))}
                       
                         </Radio.Group>
@@ -297,10 +296,29 @@ function Checkout() {
                         <span className={styles.title}>Ghi chú:</span>
                         <textarea className={`${styles.input}`} name="message" rows="4"></textarea>
                     </div>
-                    <div className={styles.btnContainer}>
-                        {/* <input className={styles.btnCheckout} type="submit" name="btnCheckout" value="GỬI HÀNG (COD)" /> */}
-                        <Button onClick={handleOrder} className={styles.btnCheckout}>Đặt hàng</Button>
-                    </div>
+                    <div>
+                        <Row>
+                            <Col span={18}></Col>
+                            <Col span={6}>
+                            <Row>
+                                        <Col span={12}>Tổng tiền hàng:</Col>
+                                        <Col span={12}>{formatVND(totalMoney)}</Col>
+                                </Row>
+                                <Row>
+                                        <Col span={12}>Tiền vận chuyển:</Col>
+                                        <Col span={12}>{formatVND(feeShip)}</Col>
+                                </Row>
+                                <Row>
+                                    <Col span={12}>Tong Tien thanh toán:</Col>
+                                    <Col span={12}>{formatVND(parseFloat(totalMoney) + parseFloat(feeShip))}</Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                        <Row className={styles.btnContainer}>
+                            {/* <input className={styles.btnCheckout} type="submit" name="btnCheckout" value="GỬI HÀNG (COD)" /> */}
+                            <Button onClick={handleOrder} className={styles.btnCheckout}>Đặt hàng</Button>
+                        </Row>
+                        </div>
                 </div>
             </div>
         </div>
