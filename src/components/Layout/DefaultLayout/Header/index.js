@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import Tippy from '@tippyjs/react/headless';
 import { ShoppingCartOutlined, ShoppingOutlined, UserOutlined, Avata } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { Icon } from '@iconify/react';
 import { Input } from 'antd';
 import { Wrapper as PopperWrapper } from '~/components/Poppers';
-// import { useEffect, useState } from 'react';
-import {Input} from 'antd';
 import Products from '~/components/Products';
 import Button from '~/components/Button';
 import { AuthContext } from '~/Context/AuthProvider';
@@ -18,16 +14,11 @@ import { Avatar } from 'antd';
 
 const cx = classNames.bind(styles);
 function Header() {
-    // const [searchResult, setSearchResult] = useState([]);
-    // const [searchValue, setSearchValue] = useState('');
+    
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setSearchResult([1, 2, 3]);
-    //     }, 0);
-    // }, []);
-   
-
+    const {carts} = React.useContext(AppContext);
+    const {user} = React.useContext(AuthContext);
+    const [searchInput, setSearchInput] = useState('')
     const handleOnChange = (e) => {
         setTimeout(() => {
             setSearchInput(e.target.value);
@@ -46,9 +37,10 @@ function Header() {
         fetch('/api/phone/search', requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(',,,', data);
+                
             });
     }, [searchInput]);
+
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -78,7 +70,8 @@ function Header() {
                             placeholder="Tìm kiếm "
                             spellCheck={false}
                             // onChange={(e) => setSearchValue(e.target.value)}
-                        ></input>
+                            onChange={handleOnChange}
+                        />
                     </div>
                 </Tippy>
                 <div className={cx('product-cart')}>
