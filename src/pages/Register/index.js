@@ -4,7 +4,7 @@ import styles from './Register.module.scss';
 import { FacebookFilled, GoogleOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Input, Row, Col, Typography } from 'antd';
 import styled from 'styled-components';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 import { Link } from 'react-router-dom';
 
@@ -24,15 +24,20 @@ const Btn = styled(Button)`
     }
 `;
 
+const Erro = styled(Typography.Text)`
+    position: relative;
+    top: -5px;
+`;
+
 function Register() {
     const navigate = useNavigate();
-    const [nameInput, setNameInput,] = useState();
-    const [emailInput, setEmailInput,] = useState();
-    const [phoneInput, setPhoneInput,] = useState();
-    const [passowrdInput, setPasswordInput,] = useState();
-    const [errorName,setErrorName] = useState(false);
-    const [errorEmail,setErrorEmail] = useState(false);
-    const [errorPhone,setErrorPhone] = useState(false);
+    const [nameInput, setNameInput] = useState();
+    const [emailInput, setEmailInput] = useState();
+    const [phoneInput, setPhoneInput] = useState();
+    const [passowrdInput, setPasswordInput] = useState();
+    const [errorName, setErrorName] = useState(false);
+    const [errorEmail, setErrorEmail] = useState(false);
+    const [errorPhone, setErrorPhone] = useState(false);
 
     const handleOnchangNameInput = (e) => {
         setNameInput(e.target.value);
@@ -51,35 +56,33 @@ function Register() {
     };
 
     const handleRegister = () => {
-        console.log(nameInput, emailInput,phoneInput, passowrdInput)
+        console.log(nameInput, emailInput, phoneInput, passowrdInput);
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 userName: nameInput,
                 email: emailInput,
                 phone: phoneInput,
-                password: passowrdInput
-            })
+                password: passowrdInput,
+            }),
         };
         fetch('/api/customer/register', requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
                 if (data.status == 0) {
-                   data.error.map(err => 
-                    {
+                    data.error.map((err) => {
                         if (err == 1) setErrorName(true);
-                        if (err == 2) setErrorEmail(true)
-                        if (err == 3) setErrorPhone(true)
-                    })
-                }
-                else {
+                        if (err == 2) setErrorEmail(true);
+                        if (err == 3) setErrorPhone(true);
+                    });
+                } else {
                     navigate('/login');
                 }
             });
-    }
-    
+    };
+
     return (
         <form className={cx('auth-form')}>
             <Link to="/" className={cx('btn-close')}>
@@ -91,19 +94,52 @@ function Register() {
             <div className={cx('content')}>
                 <div className={cx('info')}>
                     <Row>
-                        <Input type={'text'} className={cx('account')} onChange={handleOnchangNameInput} />
-                        {errorName&&<Typography.Text classnName={cx('error')} type='danger'>*Tên người dùng đã tồn tại! Vui lòng nhập mới.</Typography.Text>}
+                        <Input
+                            type={'text'}
+                            placeholder={'Tài khoản'}
+                            className={cx('account')}
+                            onChange={handleOnchangNameInput}
+                        />
+                        {errorName && (
+                            <Erro classnName="error" type="danger">
+                                *Tên người dùng đã tồn tại! Vui lòng nhập mới.
+                            </Erro>
+                        )}
                     </Row>
                     <Row>
-                        <Input type={'email'} className={cx('account')} onChange={handleOnchangEmailInput}/>
-                        {errorEmail&&<Typography.Text classnName={cx('error')} type='danger'>*Email đã tồn tại! Vui lòng nhập mới.</Typography.Text>}
+                        <Input
+                            type={'email'}
+                            placeholder={'Nhập email'}
+                            className={cx('account')}
+                            onChange={handleOnchangEmailInput}
+                        />
+                        {errorEmail && (
+                            <Erro classnName="error" type="danger">
+                                *Email đã tồn tại! Vui lòng nhập mới.
+                            </Erro>
+                        )}
                     </Row>
                     <Row>
-                        <Input type={'phone'} className={cx('account')} onChange={handleOnchangPhoneInput}/><br />
-                        {errorPhone&&<Typography.Text classnName={cx('error')} type='danger'>*Số điện thoại đã tồn tại! Vui lòng nhập mới.</Typography.Text>}
+                        <Input
+                            type={'phone'}
+                            placeholder={'Nhập số điện thoại'}
+                            className={cx('account')}
+                            onChange={handleOnchangPhoneInput}
+                        />
+                        <br />
+                        {errorPhone && (
+                            <Typography.Text classnName={cx('error')} type="danger">
+                                *Số điện thoại đã tồn tại! Vui lòng nhập mới.
+                            </Typography.Text>
+                        )}
                     </Row>
                     <Row>
-                        <Input type={'password'} className={cx('account')} onChange={handleOnchangPassowrdInput}/>
+                        <Input
+                            type={'password'}
+                            placeholder={'Nhập mật khẩu'}
+                            className={cx('account')}
+                            onChange={handleOnchangPassowrdInput}
+                        />
                     </Row>
                 </div>
 

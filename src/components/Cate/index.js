@@ -14,7 +14,7 @@ function Cate() {
     return (
         <div className={styles.cate}>
             <div className={styles.cateHeading}>Thương hiệu</div>
-            <div className={styles.cateContentContainer}>
+            <div className={styles.cateContentContainer} style={{ textAlign: 'center' }}>
                 <a className={styles.cateItem} href="/">
                     IphonIphonee
                 </a>
