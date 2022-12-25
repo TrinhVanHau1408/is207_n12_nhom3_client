@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import styles from './Cart.module.scss';
-import { AuthContext } from '~/Context/AuthProvider';
 import { AppContext } from '~/Context/AppProvider';
 import formatVND from '~/utilis';
 import { useLocalStorage } from '~/hooks/useLocalStorage';
