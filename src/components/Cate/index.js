@@ -1,5 +1,5 @@
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 const styles = {
     cate: 'flex items-center px-6 py-8 bg-gray-100',
     cateHeading: 'font-semibold basis-2/12 text-lg text-left',
@@ -11,55 +11,27 @@ const styles = {
 };
 
 function Cate() {
+
+    const [cates, setCates] = useState([]);
+
+    useEffect(() => {
+        fetch('/api/category')
+        .then(res => res.json())
+        .then(data => setCates(data.data));
+    },[])
     return (
         <div className={styles.cate}>
             <div className={styles.cateHeading}>Thương hiệu</div>
             <div className={styles.cateContentContainer} style={{ textAlign: 'center' }}>
-                <a className={styles.cateItem} href="/">
-                    IphonIphonee
-                </a>
-                <a className={styles.cateItem} href="/">
-                    SamsungIphone
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Oppo
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Xiaomi
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Realme
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Huawei
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Poco
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Nokia
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Iphone
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Samsung
-                </a>
-                <a className={styles.cateItem} href="/">
-                    OppoIphone
-                </a>
-                <a className={styles.cateItem} href="/">
-                    XiaomiIphone
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Realme
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Huawei
-                </a>
-                <a className={styles.cateItem} href="/">
-                    Samsung
-                </a>
+                {(cates!=null && cates!=undefined) && 
+                    cates.map(cate => (
+                            <Link key={cate.id} className={styles.cateItem} to={'/phone/'+cate.id}>
+                                {cate.name}
+                            </Link>
+                    ))
+                }
+               
+                
             </div>
         </div>
     );

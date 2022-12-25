@@ -177,7 +177,7 @@ function Checkout() {
                     clearLocalStorage();
                 });
 
-            api.open({
+            api.success({
                 message: 'Đặt hàng thành công',
                 description: 'Cảm ơn quý khách đã tin tưởng!',
                 duration: 0,
