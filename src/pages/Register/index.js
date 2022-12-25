@@ -1,7 +1,8 @@
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Register.module.scss';
 import { FacebookFilled, GoogleOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Input } from 'antd';
 import styled from 'styled-components';
 
 import { Link } from 'react-router-dom';
@@ -23,6 +24,44 @@ const Btn = styled(Button)`
 `;
 
 function Register() {
+    const [nameInput, setNameInput,] = useState();
+    const [emailInput, setEmailInput,] = useState();
+    const [phoneInput, setPhoneInput,] = useState();
+    const [passowrdInput, setPasswordInput,] = useState();
+
+    const handleOnchangNameInput = (e) => {
+        setNameInput(e.target.value);
+    };
+
+    const handleOnchangEmailInput = (e) => {
+        setEmailInput(e.target.value);
+    };
+
+    const handleOnchangPhoneInput = (e) => {
+        setPhoneInput(e.target.value);
+    };
+
+    const handleOnchangPassowrdInput = (e) => {
+        setPasswordInput(e.target.value);
+    };
+
+    const handleRegister = () => {
+        console.log(nameInput, emailInput,phoneInput, passowrdInput)
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                userName: nameInput,
+                email: emailInput,
+                phone: phoneInput,
+                passowrd: passowrdInput
+            })
+        };
+        fetch('/api/customer/register', requestOptions)
+            .then(response => response.json())
+            .then(data => console.log(data));
+    }
+    
     return (
         <form className={cx('auth-form')}>
             <Link to="/" className={cx('btn-close')}>
@@ -33,13 +72,13 @@ function Register() {
             </div>
             <div className={cx('content')}>
                 <div className={cx('info')}>
-                    <input type={'text'} className={cx('account')} placeholder="Nhập tên tài khoản"></input> <br />
-                    <input type={'email'} className={cx('account')} placeholder="Nhập email"></input> <br />
-                    <input type={'number'} className={cx('account')} placeholder="Nhập SĐT"></input> <br />
-                    <input type={'password'} className={cx('account')} placeholder="Nhập mật khẩu"></input>
+                    <Input type={'text'} className={cx('account')} onChange={handleOnchangNameInput} /> <br />
+                    <Input type={'email'} className={cx('account')} onChange={handleOnchangEmailInput}/><br />
+                    <Input type={'phone'} className={cx('account')} onChange={handleOnchangPhoneInput}/><br />
+                    <Input type={'password'} className={cx('account')} onChange={handleOnchangPassowrdInput}/>
                 </div>
 
-                <Btn>Đăng ký</Btn>
+                <Btn onClick={handleRegister}>Đăng ký</Btn>
                 <br />
                 <Link className={cx('login')} to={'/login'}>
                     Đăng nhập
