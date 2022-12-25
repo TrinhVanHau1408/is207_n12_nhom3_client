@@ -326,23 +326,24 @@ function Checkout() {
                             <Col span={20}></Col>
                             <Col span={4}>
                                 <Row>
-                                    <Col span={16} className="paymentTitle">
+                                    <Col span={14} className="paymentTitle">
                                         Tổng tiền hàng:
                                     </Col>
-                                    <Col span={8} className="payment">
+                                    <Col span={10} className="payment">
                                         {formatVND(totalMoney)}
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col span={16}>Tiền vận chuyển:</Col>
-                                    <Col span={8} className="payment">
+                                    <Col span={14}>Tiền vận chuyển:</Col>
+                                    <Col span={10} className="payment">
                                         {formatVND(feeShip)}
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col span={16}>Thanh toán:</Col>
-                                    <Col span={8} className="payment">
-                                        {formatVND(parseFloat(totalMoney) + parseFloat(feeShip))}
+                                    <Col span={14}>Thanh toán:</Col>
+                                    <Col span={10} className="payment">
+                                        <Typography.Text type="danger">{formatVND(parseFloat(totalMoney) + parseFloat(feeShip))}</Typography.Text>
+                                        
                                     </Col>
                                 </Row>
                             </Col>

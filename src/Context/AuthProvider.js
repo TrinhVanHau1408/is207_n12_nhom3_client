@@ -29,11 +29,11 @@ export default function AuthProvider({ children }) {
                 fetch('/api/customer/login', requestOptions)
                     .then(response => response.json())
                     .then(data => {
-                        const {customer:{ id, name, gender, phoneNumber, email, address }} = data;
+                        const {customer:{ id, name, imgUrl, gender, phoneNumber, email, address }} = data;
 
-                        setUser({ id, name, gender, phoneNumber, email, address });
+                        setUser({ id, name, imgUrl, gender, phoneNumber, email, address });
 
-                        setSavedLocalUser({ id, name, gender, phoneNumber, email, address });
+                        setSavedLocalUser({ id, name, imgUrl, gender, phoneNumber, email, address });
                     });
                     
                     setIsLoading(false);

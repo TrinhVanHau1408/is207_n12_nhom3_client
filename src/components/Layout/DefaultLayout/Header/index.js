@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import Tippy from '@tippyjs/react/headless';
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { Wrapper as PopperWrapper } from '~/components/Poppers';
 // import { useEffect, useState } from 'react';
+import {Input} from 'antd';
 import Products from '~/components/Products';
 import Button from '~/components/Button';
 import { AuthContext } from '~/Context/AuthProvider';
@@ -18,11 +19,29 @@ function Header() {
     // const [searchResult, setSearchResult] = useState([]);
     // const [searchValue, setSearchValue] = useState('');
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setSearchResult([1, 2, 3]);
-    //     }, 0);
-    // }, []);
+    const [searchInput, setSearchInput] = useState('');
+
+    const handleSearchInput = (e) => {
+        
+            setTimeout(() => {
+                setSearchInput(e.target.value);
+            }, 50);
+    }
+
+    useEffect(() => {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                   search: searchInput
+                }),
+            };
+            fetch('/api/phone/search', requestOptions)
+                .then((response) => response.json())
+                .then((data) => console.log(data));
+        
+    }, [searchInput])
+    
    
 
     const {user} = React.useContext(AuthContext);
@@ -54,12 +73,13 @@ function Header() {
                     )}
                 >
                     <div className={cx('search')}>
-                        <input
+                        <Input
                             // value={searchValue}
                             placeholder="Tìm kiếm "
                             spellCheck={false}
                             // onChange={(e) => setSearchValue(e.target.value)}
-                        ></input>
+                            onCanPlayThroughCapture={handleSearchInput}
+                        />
                     </div>
                 </Tippy>
                 <div className={cx('product-cart')}>
@@ -80,7 +100,7 @@ function Header() {
                                     style={{ fontSize: '25px', position: 'absolute', right: '12px', top: '12px' }}
                                 /> */}
                                 {/* <p style={{color: 'red'}}>{user?user.customer.name: 'oke'}</p> */}
-                                <Avatar size={64} style={{ backgroundColor: '#87d068' }} src={user.imgUrl?user.imgUrl:'https://haycafe.vn/wp-content/uploads/2021/12/Hinh-nen-cute.jpg'} />
+                                <Avatar size={64} style={{ backgroundColor: '#87d068' }} src={user.imgUrl} />
                                 
                             <p style={{color: '#fff'}}>{user&&user.name}</p>
                         </Link>

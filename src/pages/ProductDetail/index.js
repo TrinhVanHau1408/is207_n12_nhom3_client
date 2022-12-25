@@ -355,6 +355,7 @@ function ProcductDetail(props) {
                     customerId: user.id,
                     item: {
                         phoneId: detail.phone.id,
+                        imgUrl: detail.phone.imgUrl,
                         phoneDetailId: variant.id,
                         quantity: quantitySelect,
                         priceSale: price,
