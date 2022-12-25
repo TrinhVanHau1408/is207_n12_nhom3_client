@@ -41,6 +41,10 @@
     text-align: center;
 }
 
+.check-item:hover {
+    box-shadow: 0px 0px 1px 1px var(--primary);
+}
+
 .product-name {
     font-size: 14px;
     font-weight: 600;
@@ -56,8 +60,23 @@
     margin-bottom: 0;
 }
 
-.btn-delete {
+.btn-controll {
     font-weight: 500;
+    // display: flex;
+    // justify-content: space-evenly;
+    .btn-edit {
+        margin-right: 10px;
+        border: none;
+        color: #fff;
+        background: var(--primary);
+    }
+    .btn-edit:hover {
+        scale: (1.1);
+    }
+
+    .btn-delete:hover {
+        scale: (1.1);
+    }
 }
 
 .footer {
@@ -90,9 +109,4 @@
     text-align: right;
     margin: 0 40px;
     padding-bottom: 50px;
-
-    Button {
-        padding: 15px 20px;
-        font-size: 18px;
-    }
 }

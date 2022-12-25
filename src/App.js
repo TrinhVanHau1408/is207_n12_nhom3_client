@@ -2,11 +2,14 @@ import { Fragment } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { publicRoutes } from '~/routes';
 import { DefaultLayout } from '~/components/Layout';
-
+import AuthProvider from './Context/AuthProvider';
+import AppProvider from './Context/AppProvider';
 function App() {
     return (
-        <Router>
-            <div className="App">
+  <AuthProvider>
+           <AppProvider>
+            <Router>
+                <div className="App">
                 <Routes>
                     {publicRoutes.map((route, index) => {
                         // const Layout = route.layout === null ? Fragment : DefaultLayout;
@@ -31,8 +34,10 @@ function App() {
                         );
                     })}
                 </Routes>
-            </div>
-        </Router>
+                </div>
+                </Router>
+           </AppProvider>
+        </AuthProvider>
     );
 }
 
