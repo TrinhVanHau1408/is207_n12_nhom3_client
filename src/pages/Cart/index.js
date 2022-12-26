@@ -48,7 +48,7 @@ function Cart() {
     const [savedLocalCheckout, setSavedLocalCheckout, clearLocalStorage] = useLocalStorage('checkout');
     const [savedLocalUser, setSavedLocalUser, clearLocalStorageUser] = useLocalStorage('user');
     const navigate = useNavigate();
-    const { carts, cartId, setCartId, cartChange, setUpdatedQuannity } = React.useContext(AppContext);
+    const { carts, cartId, setCartId, setUpdatedQuannity, selectedCartId ,seIsDeleteCart } = React.useContext(AppContext);
     const [checkedList, setCheckedList] = useState([]);
     const [indeterminate, setIndeterminate] = useState(false);
     const [checkAll, setCheckAll] = useState(false);
@@ -58,10 +58,10 @@ function Cart() {
         navigate('/login')
     }
     useEffect(() => {
-        setCheckedList([cartChange]);
+        setCheckedList([selectedCartId]);
         setTotalPrice(totalMoney(checkedList, carts));
-        setCartId([cartChange]);
-    }, [cartChange]);
+        setCartId([selectedCartId]);
+    }, [selectedCartId]);
 
     const handleDecrease = (e) => {
         const id = e.currentTarget.dataset.id;
@@ -69,7 +69,6 @@ function Cart() {
             if (cart.id == id) return cart;
         });
 
-        console.log('ccc', cartSelected[0]);
 
         const requestOptions = {
             method: 'PUT',
@@ -126,6 +125,21 @@ function Cart() {
             console.log('Checkout not oke');
         }
     };
+
+    const handleDeleteCart = (e) => {
+        let id = e.currentTarget.dataset.id;
+        const requestOptions = {
+            method: 'delete',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+            }),
+        };
+        fetch('/api/cart/delete/'+id, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                seIsDeleteCart(id)
+            });
+    }
     console.log('list ID cart', carts);
     return (
         <div className={cx('cart')}>
@@ -187,11 +201,11 @@ function Cart() {
                                             </WarpperButtonStyled>
                                         </Col>
                                         <Col lg={4}>
-                                            <h4 className={cx('price')}>{formatVND(cart.priceSale)}</h4>
+                                            <h4 className={cx('price')}>{formatVND(cart.priceSale*0.9)}</h4>
                                         </Col>
                                         <Col lg={4} className={cx('btn-controll')}>
                                             <Button className={cx('btn-edit')}>Sửa</Button>
-                                            <Button danger className={cx('btn-delete')}>
+                                            <Button danger className={cx('btn-delete')} data-id={cart.id} onClick={handleDeleteCart}>
                                                 Xóa
                                             </Button>
                                         </Col>

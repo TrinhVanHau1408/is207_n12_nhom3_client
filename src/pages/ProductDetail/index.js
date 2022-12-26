@@ -205,7 +205,7 @@ function ProcductDetail(props) {
             .then((data) => data.json())
             .then((res) => {
                 setDetail(res);
-                setPrice(res.phone.priceSale);
+                setPrice(parseFloat(res.phone.priceSale));
                 setLoaded(true);
             })
             .catch((err) => console.log(err));
@@ -309,10 +309,10 @@ function ProcductDetail(props) {
             updateQuanity(detail.variants);
             return;
         }
-        let percentPrice = e.currentTarget.dataset.percentprice;
+        let percentPrice =  parseFloat(e.currentTarget.dataset.percentprice);
         let ramId = e.currentTarget.dataset.ramid;
         let romId = e.currentTarget.dataset.romid;
-        setPrice(detail.phone.priceSale * (1 + percentPrice / 100));
+        setPrice(parseFloat(detail.phone.priceSale) * parseFloat(1 + (percentPrice / 100)));
         setSelectedRom(romId);
         setSelectedRam(ramId);
         if (quantitySelect != 1) setQuantitySelect(1);

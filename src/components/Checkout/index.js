@@ -251,7 +251,7 @@ function Checkout() {
                                 <Typography.Text>{ck.quantity}</Typography.Text>
                             </Col>
                             <Col span={2} className="product_price">
-                                <Typography.Text>{formatVND(ck.priceSale)}</Typography.Text>
+                                <Typography.Text>{formatVND(ck.priceSale*0.9)}</Typography.Text>
                             </Col>
                             <Col span={5} className="product_total">
                                 <Typography.Text>{formatVND(ck.totalMoney)}</Typography.Text>

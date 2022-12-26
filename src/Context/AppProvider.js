@@ -10,8 +10,9 @@ export default function AppProvider({ children }) {
     const [cartChange, setCartChange] = useState(0);
     const [cartId, setCartId] = useState([]);
     const [isOrdering, setIsOrdering] = useState([]);
-    const [selectedOrderId, setSlectedOrder] = useState(0);
+    const [isDeleteCart, seIsDeleteCart] = useState(0);
     const [selectedCartId, setSelectedCartId] = useState(0);
+
     // console.log(user);
     useEffect(() => {
         if (user != null && user != undefined) {
@@ -20,10 +21,10 @@ export default function AppProvider({ children }) {
             .then(res => setCarts(res.cart))
             .catch(err => console.log(err))
         }
-    }, [user, cartChange, isOrdering, selectedCartId])
+    }, [user, cartChange, isOrdering, selectedCartId, isDeleteCart])
     
     return (
-        <AppContext.Provider value={{carts, setCartChange, cartId ,setCartId, setIsOrdering, setSlectedOrder, cartChange, setSelectedCartId }}>
+        <AppContext.Provider value={{carts, setCartChange, cartId ,setCartId, setIsOrdering, cartChange, setSelectedCartId, seIsDeleteCart }}>
               {children}
         </AppContext.Provider>
           

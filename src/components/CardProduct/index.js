@@ -23,7 +23,7 @@ const CardStyled = Styled(Card)`
 
     .productButton {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         margin-top: 2px;
     }
 
@@ -61,10 +61,10 @@ function CardProduct({id,slug, name, imgUrl, price}) {
                 <img src={imgUrl} alt={name}/>
                 <Typography.Title level={4} className="productName">{name}</Typography.Title>
                 <Typography.Title level={3} type='danger' className="productPrice">{formatVND(price)}</Typography.Title>
-                <Typography.Text type='danger' className='productCost'>{formatVND(price)}</Typography.Text>
+                <Typography.Text type='danger' className='productCost'>{formatVND(price*0.9)}</Typography.Text>
 
                 <div className='productButton'>
-                    <Button className='productButton__btnAdd'>Add to cart</Button>
+                    {/* <Button className='productButton__btnAdd'>Add to cart</Button> */}
                     <Button className='productButton__btnView' >View</Button>
                 </div>
             </CardStyled>
